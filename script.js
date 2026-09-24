@@ -129,3 +129,58 @@ loadingScreen.addEventListener("click", () => {
 });
 
 showIntro();
+
+/* =========================================================
+   SEE MORE / SEE LESS
+========================================================= */
+
+const seeMoreBtn = document.getElementById("seeMoreBtn");
+const seeLessBtn = document.getElementById("seeLessBtn");
+const artArchive = document.getElementById("artArchive");
+
+
+if (seeMoreBtn && artArchive) {
+
+    seeMoreBtn.addEventListener("click", () => {
+
+        artArchive.classList.add("open");
+
+        seeMoreBtn.style.display = "none";
+
+        // Tunggu animasi mulai,
+        // lalu scroll sedikit ke area ART
+        setTimeout(() => {
+
+            artArchive.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }, 150);
+
+    });
+
+}
+
+
+if (seeLessBtn && artArchive) {
+
+    seeLessBtn.addEventListener("click", () => {
+
+        artArchive.classList.remove("open");
+
+        // Munculkan kembali SEE MORE
+        setTimeout(() => {
+
+            seeMoreBtn.style.display = "flex";
+
+            seeMoreBtn.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }, 500);
+
+    });
+
+}
