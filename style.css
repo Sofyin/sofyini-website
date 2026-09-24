@@ -1237,7 +1237,7 @@ button,
 
 .settings-icon {
   position: absolute;
-  top: 9px;
+  top: 10px;
   left: 4px;
   width: 26px;
   height: 14px;
@@ -1256,6 +1256,8 @@ button,
 .settings-button {
   width: 38px;
   height: 36px;
+  top: 50px;
+  left: 4px;
   margin: 0;
   padding: 0;
 
