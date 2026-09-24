@@ -468,6 +468,18 @@ button,
 }
 
 @media(max-width:800px){
+    .cursor {
+        display: none !important;
+    }
+
+    html,
+    body,
+    a,
+    button,
+    .work-card {
+        cursor: auto !important;
+    }
+}
 
     .works {
         display: grid;
