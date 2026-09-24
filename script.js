@@ -96,3 +96,11 @@ document.addEventListener("keydown", function (e) {
         closePreview();
     }
 });
+
+window.addEventListener("load", () => {
+    const loadingScreen = document.getElementById("loading-screen");
+
+    setTimeout(() => {
+        loadingScreen.classList.add("loaded");
+    }, 1800);
+});
