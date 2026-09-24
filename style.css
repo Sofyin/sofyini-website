@@ -366,7 +366,7 @@ button,
 }
 .cursor {
     position: fixed;
-    z-index: 99999;
+    z-index: 9999999 !important;
     width: 16px;
     height: 16px;
     border: 1px solid white;
@@ -375,6 +375,7 @@ button,
     transition: width .15s ease, height .15s ease, background .15s ease;
     mix-blend-mode: difference;
     will-change: transform;
+    
 }
 .cursor span {
   display: none;
@@ -674,8 +675,10 @@ button,
         letter-spacing: -3px;
     }   
 }
-.cursor {
-    z-index: 9999999 !important;
+@media screen and (max-width: 800px) {
+    .cursor {
+        display: none !important;
+    }
 }
 
 #loading-screen {
