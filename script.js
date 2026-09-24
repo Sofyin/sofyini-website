@@ -428,3 +428,133 @@ if (
     });
 
 }
+
+const settingsButton =
+    document.getElementById("settingsButton");
+
+const settingsPanel =
+    document.getElementById("settingsPanel");
+
+const themeToggle =
+    document.getElementById("themeToggle");
+
+const audioToggle =
+    document.getElementById("audioToggle");
+
+const audioText =
+    document.getElementById("audioText");
+
+if (
+    settingsButton &&
+    settingsPanel
+) {
+
+    settingsButton.addEventListener("click", (e) => {
+
+        e.stopPropagation();
+
+        settingsButton.classList.toggle("active");
+
+        settingsPanel.classList.toggle("active");
+
+    });
+
+    document.addEventListener("click", (e) => {
+
+        if (
+            !settingsPanel.contains(e.target) &&
+            !settingsButton.contains(e.target)
+        ) {
+
+            settingsButton.classList.remove("active");
+
+            settingsPanel.classList.remove("active");
+
+        }
+
+    });
+
+}
+
+
+function applyTheme(theme) {
+
+    if (theme === "light") {
+
+        document.body.classList.add("light-mode");
+
+    } else {
+
+        document.body.classList.remove("light-mode");
+
+    }
+
+}
+
+const savedTheme =
+    localStorage.getItem("sofyini-theme") || "dark";
+
+applyTheme(savedTheme);
+
+if (themeToggle) {
+
+    themeToggle.addEventListener("click", (e) => {
+
+        e.stopPropagation();
+
+        const isLight =
+            document.body.classList.contains("light-mode");
+
+
+        const newTheme =
+            isLight ? "dark" : "light";
+
+
+        applyTheme(newTheme);
+
+        localStorage.setItem(
+            "sofyini-theme",
+            newTheme
+        );
+
+    });
+
+}
+
+
+let audioEnabled = false;
+
+
+if (audioToggle) {
+
+    audioToggle.addEventListener("click", (e) => {
+
+        e.stopPropagation();
+
+        audioEnabled = !audioEnabled;
+
+
+        if (audioEnabled) {
+
+            audioToggle.classList.add("active");
+
+            if (audioText) {
+                audioText.textContent = "ON";
+            }
+
+        } else {
+
+            audioToggle.classList.remove("active");
+
+            if (audioText) {
+                audioText.textContent = "OFF";
+            }
+
+        }
+
+    });
+
+}
+{/* <button onclick="window.location.href = 'mailto:sofyannabil476@gmail.com?subject=Halo%20Admin&body=Halo,%20saya%20ingin%20bertanya...';">
+Kirim Pesan
+</button> */}
