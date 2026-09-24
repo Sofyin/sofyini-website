@@ -23,7 +23,17 @@ document.addEventListener('keydown',e=>{
  }
 });
 
+const isTouchDevice =
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0;
+
+if (isTouchDevice) {
+    cursor.style.display = "none";
+}
+
 document.addEventListener("mousemove", (e) => {
+    if (isTouchDevice) return;
+
     cursor.style.transform =
         `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate3d(-50%, -50%, 0)`;
 });
