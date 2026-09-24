@@ -468,18 +468,6 @@ button,
 }
 
 @media(max-width:800px){
-    .cursor {
-        display: none !important;
-    }
-
-    html,
-    body,
-    a,
-    button,
-    .work-card {
-        cursor: auto !important;
-    }
-}
 
     .works {
         display: grid;
@@ -493,6 +481,7 @@ button,
         display: block;
         margin: 0 !important;
         transform: none;
+        cursor: auto !important;
     }
     .work-card img {
     width: 100%;
@@ -528,7 +517,6 @@ button,
     body {
         overflow: hidden;
     }
-    
 
     .nav-links {
         display: none;
@@ -594,6 +582,7 @@ button,
         width: 100%;
         gap: 20px;
     }
+    
 
     .work-card {
         display: block;
@@ -650,5 +639,5 @@ button,
     .contact-scene h2 {
         font-size: 54px;
         letter-spacing: -3px;
-    }
+    }   
 }
