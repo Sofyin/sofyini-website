@@ -231,7 +231,7 @@ em {
 }
 
 .work-card:nth-child(3) img {
-    object-position: center 65%;
+    object-position: center 20%;
 }
 .work-card img {
     width: 100%;
