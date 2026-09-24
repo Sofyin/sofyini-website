@@ -1,106 +1,156 @@
-const scroller=document.getElementById('scroller');
-const scenes=[...document.querySelectorAll('.scene')];
-const current=document.getElementById('current');
-const cursor=document.querySelector('.cursor');
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="SOFyini — Visual Designer & Digital Artist">
+<title>SOFyini — Experimental Portfolio</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-const observer=new IntersectionObserver(entries=>{
- entries.forEach(entry=>{
-  if(entry.isIntersecting){
-   entry.target.classList.add('active');
-   current.textContent=String(scenes.indexOf(entry.target)+1).padStart(2,'0');
-  }
- });
-},{root:scroller,threshold:.55});
-scenes.forEach(s=>observer.observe(s));
+<div class="grain"></div>
+<div class="cursor"><span>VIEW</span></div>
 
-document.addEventListener('keydown',e=>{
- if(['ArrowDown','PageDown','ArrowUp','PageUp',' '].includes(e.key)){
-  e.preventDefault();
-  const active=Math.max(0,scenes.findIndex(s=>s.classList.contains('active')));
-  const dir=(e.key==='ArrowUp'||e.key==='PageUp')?-1:1;
-  const next=Math.max(0,Math.min(scenes.length-1,active+dir));
-  scenes[next].scrollIntoView({behavior:'smooth'});
- }
-});
+<nav>
+  <a class="logo" href="#home">SOFYINI<span>©</span></a>
+  <div class="counter"><b id="current">01</b> / 04</div>
+  <div class="nav-links">
+    <a href="#work">WORKS</a>
+    <a href="#about">ABOUT</a>
+    <a href="#contact">SOCIAL</a>
+  </div>
+</nav>
 
-const isTouchDevice =
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0;
+<main id="scroller">
 
-if (isTouchDevice) {
-    cursor.style.display = "none";
-}
+<section id="home" class="scene hero">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+  <div class="hero-copy">
+    <p class="eyebrow">VISUAL DESIGNER · DIGITAL ARTIST</p>
+    <h1>CREATE<br><em>IMAGINARY</em><br>WORLDS<span>.</span></h1>
+    <p class="intro">I turn ideas, images and experiments into visual stories.</p>
+    <a class="scroll-hint" href="#work">SCROLL TO EXPLORE <span>↓</span></a>
+  </div>
+  <div class="hero-image reveal">
+    <img src="assets/profile.jpg" alt="SOFyini">
+    <div class="image-label">SOF / 001</div>
+  </div>
+</section>
 
-document.addEventListener("mousemove", (e) => {
-    if (isTouchDevice) return;
+<section id="work" class="scene work-scene">
+  <div class="section-head">
+    <p class="eyebrow">02 / SELECTED WORKS</p>
+    <h2>VISUAL<br><em>EXPERIMENTS</em></h2>
+  </div>
+  <div class="works">
 
-    cursor.style.transform =
-        `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate3d(-50%, -50%, 0)`;
-});
-document.querySelectorAll('a,.work-card').forEach(el=>{
- el.addEventListener('mouseenter',()=>cursor.classList.add('view'));
- el.addEventListener('mouseleave',()=>cursor.classList.remove('view'));
-});
-scenes[0].classList.add('active');
+    <!-- PROJECT 01 -->
+    <button
+        class="work-card"
+        type="button"
+        data-image="assets/work1.jpg"
+        data-title="PROJECT ONE"
+    >
+        <img src="assets/work1.jpg" alt="Project One">
+         <span class="image-preview-hint">CLICK TO FULL PREVIEW</span>
 
-const workCards = document.querySelectorAll(".work-card");
+        <div>
+            <small>01</small>
+            <span>PROJECT ONE</span>
+            <span>↗</span>
+            <span class="mobile-preview-hint">CLICK TO FULL PREVIEW</span>
+        </div>
+    </button>
 
-workCards.forEach((card) => {
-    card.addEventListener("click", function () {
-        const image = this.getAttribute("data-image");
-        const title = this.getAttribute("data-title");
 
-        // Cek apakah modal tersedia
-        const projectPreview = document.getElementById("projectPreview");
-        const previewImage = document.getElementById("previewImage");
-        const previewTitle = document.getElementById("previewTitle");
+    <!-- PROJECT 02 -->
+    <button
+        class="work-card"
+        type="button"
+        data-image="assets/work2.jpg"
+        data-title="PROJECT TWO"
+    >
+        <img src="assets/work2.jpg" alt="Project Two">
+        <span class="image-preview-hint">CLICK TO FULL PREVIEW</span>
 
-        if (!projectPreview || !previewImage || !previewTitle) {
-            console.error("Preview modal belum ditemukan di HTML.");
-            return;
-        }
+        <div>
+            <small>02</small>
+            <span>PROJECT TWO</span>
+            <span>↗</span>
+            <span class="mobile-preview-hint">CLICK TO FULL PREVIEW</span>
+        </div>
+    </button>
 
-        previewImage.src = image;
-        previewImage.alt = title;
-        previewTitle.textContent = title;
 
-        projectPreview.classList.add("active");
-        document.body.style.overflow = "hidden";
-    });
-});
+    <!-- PROJECT 03 -->
+    <button
+        class="work-card"
+        type="button"
+        data-image="assets/work3.jpg"
+        data-title="PROJECT THREE"
+    >
+        <img src="assets/work3.jpg" alt="Project Three">
+        <span class="image-preview-hint">CLICK TO FULL PREVIEW</span>
 
-const previewClose = document.getElementById("previewClose");
-const projectPreview = document.getElementById("projectPreview");
+        <div>
+            <small>03</small>
+            <span>PROJECT TWO</span>
+            <span>↗</span>
+            <span class="mobile-preview-hint">CLICK TO FULL PREVIEW</span>
+        </div>
+    </button>
 
-function closePreview() {
-    if (!projectPreview) return;
+</div>
+</section>
 
-    projectPreview.classList.remove("active");
-    document.body.style.overflow = "";
-}
+<div id="loading-screen">
+    <div class="intro-content">
 
-if (previewClose) {
-    previewClose.addEventListener("click", closePreview);
-}
+        <div class="intro-message" id="introMessage">
+            OH, A GUEST.
+        </div>
 
-if (projectPreview) {
-    projectPreview.addEventListener("click", function (e) {
-        if (e.target === projectPreview) {
-            closePreview();
-        }
-    });
-}
+        <button id="introContinue" type="button">
+            TAP ANYWHERE TO CONTINUE
+        </button>
 
-document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-        closePreview();
-    }
-});
+    </div>
+</div>
 
-window.addEventListener("load", () => {
-    const loadingScreen = document.getElementById("loading-screen");
+<section id="about" class="scene about-scene">
+  <div class="about-number">03</div>
+  <div class="about-content">
+    <p class="eyebrow">ABOUT THE CREATOR</p>
+    <h2>BETWEEN<br><em>REALITY</em><br>& IMAGINATION.</h2>
+    <p class="about-text">SOFyini explores graphic design, photography, digital art and visual manipulation. The goal is simple: make familiar things feel a little unfamiliar.</p>
+    <div class="tags"><span>GRAPHIC DESIGN</span><span>DIGITAL ART</span><span>PHOTOGRAPHY</span><span>CREATIVE DIRECTION</span><span>VIDEO EDITOR</span><span>MUSIC COMPOSER</span></div>
+  </div>
+</section>
 
-    setTimeout(() => {
-        loadingScreen.classList.add("loaded");
-    }, 1800);
-});
+<section id="contact" class="scene contact-scene">
+  <p class="eyebrow">04 / FIND ME ELSEWHERE</p>
+  <h2>LET'S MAKE<br><em>SOMETHING</em><br>STRANGE.</h2>
+  <div class="social-grid">
+    <a href="https://www.instagram.com/sofyini_/" target="_blank">Instagram <span>↗</span></a>
+    <a href="https://pin.it/d58tIUisS" target="_blank">Pinterest <span>↗</span></a>
+    <a href="https://www.facebook.com/profile.php?id=100071643532305" target="_blank">Facebook <span>↗</span></a>
+    <a href="https://www.tiktok.com/@sofyini_" target="_blank">Tiktok - Video Edit <span>↗</span></a>
+    <a href="https://www.tiktok.com/@sofy_line" target="_blank">TikTok - Art <span>↗</span></a>
+    <a href="https://www.tiktok.com/@sofy_vex" target="_blank">TikTok - Day In mY Life <span>↗</span></a>
+  </div>
+  <footer>© 2026 SOFyini — VISUAL EXPERIMENTS</footer>
+</section>
+
+</main>
+<div class="project-preview" id="projectPreview">
+    <button class="preview-close" id="previewClose">×</button>
+
+    <div class="preview-content">
+        <img id="previewImage" src="" alt="">
+        <div class="preview-title" id="previewTitle"></div>
+    </div>
+<script src="script.js"></script>
+</div>
+</body>
+</html>
