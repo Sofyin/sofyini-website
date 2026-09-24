@@ -88,14 +88,16 @@ nav a {
     scroll-snap-type: none;
     scroll-behavior: auto;
 }
-/* .scene { */
-  scroll-snap-align: start;
-  position: relative;
-  padding: 120px 7vw 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
+.scene {
+    position: relative;
+    min-height: 100vh;
+    height: auto;
+    padding: 120px 7vw 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: visible;
+    z-index: 1;
 }
 .hero {
   flex-direction: row;
