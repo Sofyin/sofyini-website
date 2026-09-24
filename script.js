@@ -23,17 +23,7 @@ document.addEventListener('keydown',e=>{
  }
 });
 
-const isTouchDevice =
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0;
-
-if (isTouchDevice) {
-    cursor.style.display = "none";
-}
-
 document.addEventListener("mousemove", (e) => {
-    if (isTouchDevice) return;
-
     cursor.style.transform =
         `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate3d(-50%, -50%, 0)`;
 });
@@ -71,13 +61,39 @@ workCards.forEach((card) => {
 
 const previewClose = document.getElementById("previewClose");
 const projectPreview = document.getElementById("projectPreview");
+
+function closePreview() {
+    if (!projectPreview) return;
+
+    projectPreview.classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+if (previewClose) {
+    previewClose.addEventListener("click", closePreview);
+}
+
+if (projectPreview) {
+    projectPreview.addEventListener("click", function (e) {
+        if (e.target === projectPreview) {
+            closePreview();
+        }
+    });
+}
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        closePreview();
+    }
+});
+
 const loadingScreen = document.getElementById("loading-screen");
 const introMessage = document.getElementById("introMessage");
 const introContinue = document.getElementById("introContinue");
 
 const introSteps = [
     "OH, A GUEST.",
-    "HI.",
+    "HI:).",
     "LET'S GET STARTED"
 ];
 
@@ -113,37 +129,3 @@ loadingScreen.addEventListener("click", () => {
 });
 
 showIntro();
-
-function closePreview() {
-    if (!projectPreview) return;
-
-    projectPreview.classList.remove("active");
-    document.body.style.overflow = "";
-}
-
-if (previewClose) {
-    previewClose.addEventListener("click", closePreview);
-}
-
-if (projectPreview) {
-    projectPreview.addEventListener("click", function (e) {
-        if (e.target === projectPreview) {
-            closePreview();
-        }
-    });
-}
-
-document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-        closePreview();
-    }
-});
-
-window.addEventListener("load", () => {
-    const loadingScreen = document.getElementById("loading-screen");
-
-    setTimeout(() => {
-        loadingScreen.classList.add("loaded");
-    }, 2200);
-}); 
-
