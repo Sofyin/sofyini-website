@@ -438,11 +438,57 @@ const settingsPanel =
 const themeToggle =
     document.getElementById("themeToggle");
 
-const audioToggle =
-    document.getElementById("audioToggle");
+const audioToggle = document.getElementById("audioToggle");
+const audioText = document.getElementById("audioText");
+const bgMusic = document.getElementById("bgMusic");
 
-const audioText =
-    document.getElementById("audioText");
+let audioOn = false;
+
+if (audioToggle && bgMusic) {
+
+    audioToggle.addEventListener("click", async (e) => {
+
+        e.stopPropagation();
+
+        if (!audioOn) {
+
+            try {
+
+                bgMusic.volume = 0.5;
+
+                await bgMusic.play();
+
+                audioOn = true;
+
+                audioToggle.classList.add("active");
+
+                if (audioText) {
+                    audioText.textContent = "ON";
+                }
+
+            } catch (error) {
+
+                console.error("Audio gagal dimainkan:", error);
+
+            }
+
+        } else {
+
+            bgMusic.pause();
+
+            audioOn = false;
+
+            audioToggle.classList.remove("active");
+
+            if (audioText) {
+                audioText.textContent = "OFF";
+            }
+
+        }
+
+    });
+
+}
 
 if (
     settingsButton &&
@@ -521,40 +567,6 @@ if (themeToggle) {
 
 }
 
-
-let audioEnabled = false;
-
-
-if (audioToggle) {
-
-    audioToggle.addEventListener("click", (e) => {
-
-        e.stopPropagation();
-
-        audioEnabled = !audioEnabled;
-
-
-        if (audioEnabled) {
-
-            audioToggle.classList.add("active");
-
-            if (audioText) {
-                audioText.textContent = "ON";
-            }
-
-        } else {
-
-            audioToggle.classList.remove("active");
-
-            if (audioText) {
-                audioText.textContent = "OFF";
-            }
-
-        }
-
-    });
-
-}
 {/* <button onclick="window.location.href = 'mailto:sofyannabil476@gmail.com?subject=Halo%20Admin&body=Halo,%20saya%20ingin%20bertanya...';">
 Kirim Pesan
 </button> */}
