@@ -3,8 +3,6 @@ const scenes=[...document.querySelectorAll('.scene')];
 const current=document.getElementById('current');
 const cursor=document.querySelector('.cursor');
 
-let locked=false;
-
 const observer=new IntersectionObserver(entries=>{
  entries.forEach(entry=>{
   if(entry.isIntersecting){
@@ -14,18 +12,6 @@ const observer=new IntersectionObserver(entries=>{
  });
 },{root:scroller,threshold:.55});
 scenes.forEach(s=>observer.observe(s));
-
-scroller.addEventListener('wheel',e=>{
- if(locked || Math.abs(e.deltaY)<8) return;
- const index=scenes.findIndex(s=>s.getBoundingClientRect().top>=-100 && s.getBoundingClientRect().top<scroller.clientHeight*.6);
- let next=index+(e.deltaY>0?1:-1);
- next=Math.max(0,Math.min(scenes.length-1,next));
- if(next!==index){
-  e.preventDefault(); locked=true;
-  scenes[next].scrollIntoView({behavior:'smooth'});
-  setTimeout(()=>locked=false,900);
- }
-},{passive:false});
 
 document.addEventListener('keydown',e=>{
  if(['ArrowDown','PageDown','ArrowUp','PageUp',' '].includes(e.key)){
@@ -47,3 +33,57 @@ document.querySelectorAll('a,.work-card').forEach(el=>{
  el.addEventListener('mouseleave',()=>cursor.classList.remove('view'));
 });
 scenes[0].classList.add('active');
+
+const workCards = document.querySelectorAll(".work-card");
+
+workCards.forEach((card) => {
+    card.addEventListener("click", function () {
+        const image = this.getAttribute("data-image");
+        const title = this.getAttribute("data-title");
+
+        // Cek apakah modal tersedia
+        const projectPreview = document.getElementById("projectPreview");
+        const previewImage = document.getElementById("previewImage");
+        const previewTitle = document.getElementById("previewTitle");
+
+        if (!projectPreview || !previewImage || !previewTitle) {
+            console.error("Preview modal belum ditemukan di HTML.");
+            return;
+        }
+
+        previewImage.src = image;
+        previewImage.alt = title;
+        previewTitle.textContent = title;
+
+        projectPreview.classList.add("active");
+        document.body.style.overflow = "hidden";
+    });
+});
+
+const previewClose = document.getElementById("previewClose");
+const projectPreview = document.getElementById("projectPreview");
+
+function closePreview() {
+    if (!projectPreview) return;
+
+    projectPreview.classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+if (previewClose) {
+    previewClose.addEventListener("click", closePreview);
+}
+
+if (projectPreview) {
+    projectPreview.addEventListener("click", function (e) {
+        if (e.target === projectPreview) {
+            closePreview();
+        }
+    });
+}
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        closePreview();
+    }
+});
