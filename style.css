@@ -394,98 +394,175 @@ button,
 }
 .project-preview {
     position: fixed;
+
     inset: 0;
-    z-index: 9999;
-    background: rgba(0, 0, 0, 0.96);
+
+    z-index: 999999;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     padding: 40px;
+
+    background: rgba(0,0,0,.88);
+
     opacity: 0;
     visibility: hidden;
+
     pointer-events: none;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+
+    transition:
+        opacity .4s ease,
+        visibility .4s ease;
 }
 
+
 .project-preview.active {
+
     opacity: 1;
     visibility: visible;
+
     pointer-events: auto;
 }
 
+
+/* AREA GAMBAR */
+
 .preview-content {
-    width: 100%;
-    height: 100%;
+
+    position: relative;
+
+    max-width: 90vw;
+    max-height: 88vh;
+
     display: flex;
-    flex-direction: column;
+
     align-items: center;
     justify-content: center;
-    gap: 20px;
+
+    flex-direction: column;
+
+    z-index: 2;
+
 }
 
-.project-preview.active .preview-content {
-    transform: scale(1);
-}
+
+/* GAMBAR */
 
 .preview-content img {
+
+    display: block;
+
     max-width: 90vw;
     max-height: 82vh;
+
     width: auto;
     height: auto;
+
     object-fit: contain;
-    display: block;
+
 }
+
+
+/* JUDUL */
 
 .preview-title {
-    color: white;
-    font-size: 11px;
-    letter-spacing: 3px;
-}
 
-.preview-hint {
+    margin-top: 15px;
+
+    color: white;
+
     font-size: 9px;
-    letter-spacing: 1.2px;
-    opacity: 0.4;
-    margin-left: -200px;
-    white-space: nowrap;
-    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+    text-align: center;
+
+    opacity: .7;
+
 }
 
-.mobile-preview-hint {
-    display: none;
-}
-.image-preview-hint {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .3s ease;
-    white-space: nowrap;
-}
 
-.work-card:hover .image-preview-hint {
-    opacity: .65;
-}
+/* CLOSE BUTTON */
 
-.work-card {
-    position: relative;
-}
 .preview-close {
+
     position: absolute;
+
     top: 25px;
-    right: 35px;
-    z-index: 2;
+    right: 30px;
+
+    z-index: 10;
+
+    width: 45px;
+    height: 45px;
+
     border: 0;
-    background: none;
+
+    background: transparent;
+
     color: white;
-    font-size: 40px;
+
+    font-size: 30px;
     font-weight: 200;
-    cursor: pointer;
-    line-height: 1;
+
+    cursor: none !important;
+
+    opacity: .6;
+
+    transition:
+        opacity .3s ease,
+        transform .3s ease;
+}
+
+
+.preview-close:hover {
+
+    opacity: 1;
+
+    transform: rotate(90deg);
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .project-preview {
+
+        padding: 20px;
+
+    }
+
+    .preview-content {
+
+        max-width: 94vw;
+        max-height: 90vh;
+
+    }
+
+    .preview-content img {
+
+        max-width: 94vw;
+        max-height: 80vh;
+
+    }
+
+    .preview-close {
+
+        top: 15px;
+        right: 15px;
+
+        width: 40px;
+        height: 40px;
+
+        font-size: 27px;
+
+    }
+
 }
 
 .preview-close:hover {
@@ -1091,4 +1168,29 @@ button,
         opacity: .7;
     }
 
+}
+
+.work-image-wrap {
+    position: relative;
+}
+
+.image-preview-hint {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+    white-space: nowrap;
+}
+
+.work-card:hover .image-preview-hint {
+    opacity: .65;
+}
+
+.mobile-preview-hint {
+    display: none;
 }
