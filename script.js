@@ -23,10 +23,9 @@ document.addEventListener('keydown',e=>{
  }
 });
 
-document.addEventListener('mousemove',e=>{
- document.documentElement.style.setProperty('--mx',e.clientX+'px');
- document.documentElement.style.setProperty('--my',e.clientY+'px');
- cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px';
+document.addEventListener("mousemove", (e) => {
+    cursor.style.transform =
+        `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate3d(-50%, -50%, 0)`;
 });
 document.querySelectorAll('a,.work-card').forEach(el=>{
  el.addEventListener('mouseenter',()=>cursor.classList.add('view'));
