@@ -524,9 +524,10 @@ button,
     }
 
     .scene {
-        height: 100vh;
+        height: auto;
         min-height: 100vh;
         padding: 105px 24px 45px;
+        overflow: visible;
     }
 
     /* HERO */
