@@ -355,20 +355,24 @@ footer {
   color: #555;
   letter-spacing: 2px;
 }
-.cursor{
-    position:fixed;
-    z-index:100;
-    width:16px;
-    height:16px;
-    border:1px solid white;
-    border-radius:50%;
-    pointer-events:none;
-    transform:translate(-50%,-50%);
-    transition:
-        width .25s,
-        height .25s,
-        background .25s;
-    mix-blend-mode:difference;
+html,
+body,
+a,
+button,
+.work-card {
+    cursor: none !important;
+}
+.cursor {
+    position: fixed;
+    z-index: 99999;
+    width: 16px;
+    height: 16px;
+    border: 1px solid white;
+    border-radius: 50%;
+    pointer-events: none;
+    transition: width .15s ease, height .15s ease, background .15s ease;
+    mix-blend-mode: difference;
+    will-change: transform;
 }
 .cursor span {
   display: none;
@@ -512,6 +516,7 @@ footer {
     body {
         overflow: hidden;
     }
+    
 
     .nav-links {
         display: none;
