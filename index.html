@@ -1,381 +1,203 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="SOFyini — Visual Designer & Digital Artist">
-<title>SOFyini — Experimental Portfolio</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SOFyini — Visual Designer & Digital Artist">
+  <title>SOFyini — Creative Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- SETTINGS -->
-<div class="settings-wrap">
+  <div class="noise"></div>
 
-  <button
-    class="settings-button"
-    id="settingsButton"
-    type="button"
-    aria-label="Open settings">
-
-    <span class="settings-icon">
-  <i></i>
-  <i></i>
-  <i></i>
-</span>
-
-  </button>
-
-
-  <div class="settings-panel" id="settingsPanel">
-
-    <div class="settings-header">
-      <span>SETTINGS</span>
-      <span>© SOFYINI</span>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="SOFyini home">
+      <span class="brand-mark">S</span>
+      <span class="brand-name">SOFYINI<small>VISUAL ARCHIVE</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#home" class="nav-link active" data-section="home">LOBBY</a>
+      <a href="#work" class="nav-link" data-section="work">WORKS</a>
+      <a href="#about" class="nav-link" data-section="about">PROFILE</a>
+      <a href="#contact" class="nav-link" data-section="contact">SOCIAL</a>
+    </nav>
+    <div class="top-tools">
+      <span class="online-indicator"></span>
+      <span class="top-code">SOF / 001</span>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
     </div>
+  </header>
 
-
-    <!-- THEME -->
-
-    <div class="setting-row">
-
-      <div class="setting-info">
-        <span class="setting-number">01</span>
-
-        <div>
-          <strong>APPEARANCE</strong>
-          <small>LIGHT / DARK</small>
-        </div>
-      </div>
-
-
-      <button
-        class="setting-toggle theme-toggle"
-        id="themeToggle"
-        type="button">
-
-        <span class="theme-dark">DARK</span>
-        <span class="theme-light">LIGHT</span>
-
-      </button>
-
+  <div class="subbar">
+    <div class="subbar-left"><span class="subbar-slash">///</span><span id="subbarLabel">CREATIVE CHARACTER FILE</span></div>
+    <div class="subnav">
+      <a href="#home" class="sub-link active">OVERVIEW</a>
+      <a href="#work" class="sub-link">PROJECTS</a>
+      <a href="#about" class="sub-link">ABILITIES</a>
+      <a href="#contact" class="sub-link">NETWORK</a>
     </div>
+    <div class="subbar-right">EST. 2026 <span>✦</span></div>
+  </div>
 
-
-    <!-- AUDIO -->
-
-    <div class="setting-row">
-
-      <div class="setting-info">
-
-        <span class="setting-number">02</span>
-
-        <div>
-          <strong>AUDIO</strong>
-          <small>AMBIENT MUSIC</small>
+  <main>
+    <!-- HOME / CHARACTER SELECT -->
+    <section class="screen hero-screen" id="home">
+      <div class="hero-backdrop"></div>
+      <div class="hero-watermark">SOF</div>
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-icon">✦</span> CREATIVE PROFILE <span class="eyebrow-line"></span></div>
+        <div class="hero-kicker">NO. 001 / VISUAL CREATOR</div>
+        <h1>SOF<span>Y</span>INI</h1>
+        <div class="hero-role">
+          <span>VISUAL DESIGNER</span><span>DIGITAL ARTIST</span><span>5-STAR CREATIVE</span>
         </div>
+        <p class="hero-description">
+          Exploring visual possibilities through graphic design, digital art,
+          photography and image manipulation. Turning ordinary ideas into
+          unusual visual experiences.
+        </p>
 
-      </div>
-
-
-      <button
-        class="setting-toggle audio-toggle"
-        id="audioToggle"
-        type="button">
-
-        <span class="audio-icon">◉</span>
-        <span id="audioText">OFF</span>
-
-      </button>
-
-    </div>
-
-
-    <!-- CONTACT -->
-
-    <div class="setting-row">
-
-      <div class="setting-info">
-
-        <span class="setting-number">03</span>
-
-        <div>
-          <strong>CONTACT</strong>
-          <small>FEEDBACK / EMAIL</small>
+        <div class="ability-picker">
+          <button class="ability active" data-ability="design">
+            <span class="ability-symbol">✥</span><small>GRAPHIC</small>
+          </button>
+          <button class="ability" data-ability="art">
+            <span class="ability-symbol">◈</span><small>DIGITAL ART</small>
+          </button>
+          <button class="ability" data-ability="photo">
+            <span class="ability-symbol">◎</span><small>PHOTO</small>
+          </button>
         </div>
-
-      </div>
-
-
-      <a
-        class="setting-email"
-        href="mailto:sofyannabil476@gmail.com">
-
-        <span>✉</span>
-
-      </a>
-
-    </div>
-
-
-    <div class="settings-footer">
-      SOFYINI / SYSTEM SETTINGS
-    </div>
-
-  </div>
-
-</div>
-
-<div class="grain"></div>
-<div class="cursor"><span>VIEW</span></div>
-
-<nav>
-  <a class="logo" href="#home">SOFYINI<span>©</span></a>
-  <div class="counter"><b id="current">01</b> / 04</div>
-  <div class="nav-links">
-    <a href="#work">WORKS</a>
-    <a href="#about">ABOUT</a>
-    <a href="#contact">SOCIAL</a>
-  </div>
-</nav>
-
-<main id="scroller">
-
-<section id="home" class="scene hero">
-  <div class="orb orb1"></div><div class="orb orb2"></div>
-  <div class="hero-copy">
-    <p class="eyebrow">VISUAL DESIGNER · DIGITAL ARTIST</p>
-    <h1>CREATE<br><em>IMAGINARY</em><br>WORLDS<span>.</span></h1>
-    <p class="intro">I turn ideas, images and experiments into visual stories.</p>
-    <a class="scroll-hint" href="#work">SCROLL TO EXPLORE <span>↓</span></a>
-  </div>
-  <div class="hero-image reveal">
-    <img src="assets/profile.jpg" alt="SOFyini">
-    <div class="image-label">SOF / 001</div>
-  </div>
-</section>
-
-<section id="work" class="scene work-scene">
-  <div class="section-head">
-    <p class="eyebrow">02 / SELECTED WORKS</p>
-    <h2>VISUAL<br><em>EXPERIMENTS</em></h2>
-  </div>
-  <div class="works">
-
-    <!-- PROJECT 01 -->
-    <button
-        class="work-card"
-        type="button"
-        data-image="assets/work1.jpg"
-        data-title="PROJECT ONE"
-    >
-        <img src="assets/work1.jpg" alt="Project One">
-         <span class="image-preview-hint">CLICK TO FULL PREVIEW</span>
-
-        <div>
-            <small>01</small>
-            <span>PROJECT ONE</span>
-            <span>↗</span>
-            <span class="mobile-preview-hint">CLICK TO FULL PREVIEW</span>
+        <div class="ability-detail">
+          <div class="detail-heading"><span id="abilityTitle">VISUAL DESIGN</span><span class="detail-arrow">↗</span></div>
+          <p id="abilityDescription">Building visual identities, compositions and graphic experiments with a strong sense of form.</p>
         </div>
-    </button>
-
-
-    <!-- PROJECT 02 -->
-    <button
-        class="work-card"
-        type="button"
-        data-image="assets/work2.jpg"
-        data-title="PROJECT TWO"
-    >
-        <img src="assets/work2.jpg" alt="Project Two">
-        <span class="image-preview-hint">CLICK TO FULL PREVIEW</span>
-
-        <div>
-            <small>02</small>
-            <span>PROJECT TWO</span>
-            <span>↗</span>
-            <span class="mobile-preview-hint">CLICK TO FULL PREVIEW</span>
-        </div>
-    </button>
-
-
-    <!-- PROJECT 03 -->
-    <button
-        class="work-card"
-        type="button"
-        data-image="assets/work3.jpg"
-        data-title="PROJECT THREE"
-    >
-        <img src="assets/work3.jpg" alt="Project Three">
-        <span class="image-preview-hint">CLICK TO FULL PREVIEW</span>
-
-        <div>
-            <small>03</small>
-            <span>PROJECT TWO</span>
-            <span>↗</span>
-            <span class="mobile-preview-hint">CLICK TO FULL PREVIEW</span>
-        </div>
-    </button>
-
-</div>
- <!-- SEE MORE -->
-<button class="see-more" id="seeMoreBtn" type="button">
-  <span>SEE MORE</span>
-  <span class="see-more-arrow">↘</span>
-</button>
-
-
-<!-- ART ARCHIVE -->
-<div class="art-archive" id="artArchive">
-
-  <div class="art-head">
-    <p class="eyebrow">ART ARCHIVE</p>
-    <h3>SELECTED <em>ARTWORKS</em></h3>
-  </div>
-
-  <div class="art-grid">
-
-    <button class="art-item" type="button"
-      data-image="assets/art1.jpg"
-      data-title="ARTWORK 01">
-      <img src="assets/art1.jpg" alt="Artwork 01">
-      <div class="art-info">
-        <span>01</span>
-        <span>ARTWORK 01</span>
+        <a class="primary-action" href="#work"><span>EXPLORE WORKS</span><b>↗</b></a>
+        <div class="hero-footnote"><span>SCROLL / EXPLORE</span><span class="footnote-line"></span><span>01 — 04</span></div>
       </div>
-    </button>
 
-    <button class="art-item" type="button"
-      data-image="assets/art2.jpg"
-      data-title="ARTWORK 02">
-      <img src="assets/art2.jpg" alt="Artwork 02">
-      <div class="art-info">
-        <span>02</span>
-        <span>ARTWORK 02</span>
+      <div class="hero-art">
+        <div class="art-frame frame-back"></div>
+        <div class="art-frame frame-front"></div>
+        <div class="art-vertical">SOFYINI CREATIVE ARCHIVE / 2026</div>
+        <img src="assets/profile.jpg" alt="SOFyini profile artwork" class="character-image" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+        <div class="image-fallback"><span>SOF</span><small>ADD YOUR PROFILE ART<br>assets/profile.jpg</small></div>
+        <div class="character-caption"><span>CREATOR</span><b>SOFYINI</b><small>AVAILABLE FOR CREATIVE PROJECTS</small></div>
+        <div class="hero-stamp">S<br><small>001</small></div>
+        <div class="deco-cross cross-one">＋</div><div class="deco-cross cross-two">＋</div>
+        <div class="deco-dots"></div>
       </div>
-    </button>
+      <div class="side-coordinate">07° 15' S / 112° 45' E</div>
+    </section>
 
-    <button class="art-item" type="button"
-      data-image="assets/art3.jpg"
-      data-title="ARTWORK 03">
-      <img src="assets/art3.jpg" alt="Artwork 03">
-      <div class="art-info">
-        <span>03</span>
-        <span>ARTWORK 03</span>
+    <!-- WORKS -->
+    <section class="screen works-screen" id="work">
+      <div class="section-topline"><span>02 / CREATIVE DATABASE</span><span>SELECTED FILES <b>03</b></span></div>
+      <div class="section-title-row">
+        <div><p class="eyebrow">PORTFOLIO INDEX</p><h2>SELECTED <em>WORKS</em></h2></div>
+        <p class="section-intro">A collection of visual experiments, selected projects and creative explorations.</p>
       </div>
-    </button>
-
-    <button class="art-item" type="button"
-      data-image="assets/art4.jpg"
-      data-title="ARTWORK 04">
-      <img src="assets/art4.jpg" alt="Artwork 04">
-      <div class="art-info">
-        <span>04</span>
-        <span>ARTWORK 04</span>
+      <div class="category-tabs">
+        <button class="category-tab active" data-filter="all">ALL FILES <span>03</span></button>
+        <button class="category-tab" data-filter="design">GRAPHIC DESIGN</button>
+        <button class="category-tab" data-filter="art">DIGITAL ART</button>
+        <button class="category-tab" data-filter="photo">PHOTOGRAPHY</button>
       </div>
-    </button>
-
-    <button class="art-item" type="button"
-      data-image="assets/art5.jpg"
-      data-title="ARTWORK 05">
-      <img src="assets/art5.jpg" alt="Artwork 05">
-      <div class="art-info">
-        <span>05</span>
-        <span>ARTWORK 05</span>
-      </div>
-    </button>
-
-    <button class="art-item" type="button"
-      data-image="assets/art6.jpg"
-      data-title="ARTWORK 06">
-      <img src="assets/art6.jpg" alt="Artwork 06">
-      <div class="art-info">
-        <span>06</span>
-        <span>ARTWORK 06</span>
-      </div>
-    </button>
-
-  </div>
-
-  <!-- SEE LESS -->
-  <button class="see-less" id="seeLessBtn" type="button">
-    <span>SEE LESS</span>
-    <span>↖</span>
-  </button>
-
-</div>
-</section>
-
-<div id="loading-screen">
-    <div class="intro-content">
-
-        <div class="intro-message" id="introMessage">
-            OH, A GUEST.
-        </div>
-
-        <button id="introContinue" type="button">
-            TAP ANYWHERE TO CONTINUE
+      <div class="project-grid">
+        <button class="project-card" data-category="design" data-image="assets/work1.jpg" data-title="PROJECT ONE">
+          <span class="project-number">FILE_001</span><img src="assets/work1.jpg" alt="Project one" onerror="this.style.display='none'">
+          <span class="project-overlay"><b>01</b><span>OPEN FILE ↗</span></span>
+          <span class="project-meta"><b>PROJECT ONE</b><small>GRAPHIC DESIGN</small></span>
         </button>
+        <button class="project-card" data-category="art" data-image="assets/work2.jpg" data-title="PROJECT TWO">
+          <span class="project-number">FILE_002</span><img src="assets/work2.jpg" alt="Project two" onerror="this.style.display='none'">
+          <span class="project-overlay"><b>02</b><span>OPEN FILE ↗</span></span>
+          <span class="project-meta"><b>PROJECT TWO</b><small>DIGITAL ART</small></span>
+        </button>
+        <button class="project-card" data-category="photo" data-image="assets/work3.jpg" data-title="PROJECT THREE">
+          <span class="project-number">FILE_003</span><img src="assets/work3.jpg" alt="Project three" onerror="this.style.display='none'">
+          <span class="project-overlay"><b>03</b><span>OPEN FILE ↗</span></span>
+          <span class="project-meta"><b>PROJECT THREE</b><small>PHOTOGRAPHY</small></span>
+        </button>
+      </div>
+      <div class="archive-row"><span>END OF SELECTED FILES</span><span class="archive-line"></span><button id="archiveToggle">OPEN ART ARCHIVE <b>＋</b></button></div>
+      <div class="archive-grid" id="archiveGrid">
+        <button class="archive-card" data-image="assets/art1.jpg" data-title="ARTWORK 01"><img src="assets/art1.jpg" alt="Artwork 1"><span>ARTWORK 01 ↗</span></button>
+        <button class="archive-card" data-image="assets/art2.jpg" data-title="ARTWORK 02"><img src="assets/art2.jpg" alt="Artwork 2"><span>ARTWORK 02 ↗</span></button>
+        <button class="archive-card" data-image="assets/art3.jpg" data-title="ARTWORK 03"><img src="assets/art3.jpg" alt="Artwork 3"><span>ARTWORK 03 ↗</span></button>
+        <button class="archive-card" data-image="assets/art4.jpg" data-title="ARTWORK 04"><img src="assets/art4.jpg" alt="Artwork 4"><span>ARTWORK 04 ↗</span></button>
+        <button class="archive-card" data-image="assets/art5.jpg" data-title="ARTWORK 05"><img src="assets/art5.jpg" alt="Artwork 5"><span>ARTWORK 05 ↗</span></button>
+        <button class="archive-card" data-image="assets/art6.jpg" data-title="ARTWORK 06"><img src="assets/art6.jpg" alt="Artwork 6"><span>ARTWORK 06 ↗</span></button>
+      </div>
+    </section>
 
-    </div>
-</div>
-
-<section id="about" class="scene about-scene">
-  <div class="about-number">03</div>
-  <div class="about-content">
-    <p class="eyebrow">ABOUT THE CREATOR</p>
-    <h2>BETWEEN<br><em>REALITY</em><br>& IMAGINATION.</h2>
-    <p class="about-text">SOFyini explores graphic design, photography, digital art and visual manipulation. The goal is simple: make familiar things feel a little unfamiliar.</p>
-    <div class="tags"><span>GRAPHIC DESIGN</span><span>DIGITAL ART</span><span>PHOTOGRAPHY</span><span>CREATIVE DIRECTION</span><span>VIDEO EDITOR</span><span>MUSIC COMPOSER</span></div>
-  </div>
-</section>
-
-<section id="contact" class="scene contact-scene">
-  <p class="eyebrow">04 / FIND ME ELSEWHERE</p>
-  <h2>LET'S MAKE<br><em>SOMETHING</em><br>STRANGE.</h2>
-  <div class="social-grid">
-    <a href="https://www.instagram.com/sofyini_/" target="_blank">Instagram <span>↗</span></a>
-    <a href="https://pin.it/d58tIUisS" target="_blank">Pinterest <span>↗</span></a>
-    <a href="https://www.facebook.com/profile.php?id=100071643532305" target="_blank">Facebook <span>↗</span></a>
-    <a href="https://www.tiktok.com/@sofyini_" target="_blank">Tiktok - Video Edit <span>↗</span></a>
-    <a href="https://www.tiktok.com/@sofy_line" target="_blank">TikTok - Art <span>↗</span></a>
-    <a href="https://www.tiktok.com/@sofy_vex" target="_blank">TikTok - Day In mY Life <span>↗</span></a>
-  </div>
-  <footer>© 2026 SOFyini — VISUAL EXPERIMENTS</footer>
-</section>
-
-</main>
-<!-- AUDIO -->
-<audio id="bgMusic" loop preload="auto">
-    <source src="assets/music.mp3" type="audio/mpeg">
-</audio>
-
-<!-- PROJECT PREVIEW -->
-<div class="project-preview" id="projectPreview">
-
-    <button
-        class="preview-close"
-        id="previewClose"
-        type="button">
-        ×
-    </button>
-
-    <div class="preview-content">
-
-        <img
-            id="previewImage"
-            src=""
-            alt="">
-
-        <div
-            class="preview-title"
-            id="previewTitle">
+    <!-- PROFILE -->
+    <section class="screen profile-screen" id="about">
+      <div class="section-topline"><span>03 / CREATOR INFORMATION</span><span>PROFILE DATA <b>✓</b></span></div>
+      <div class="profile-layout">
+        <div class="profile-index"><span>CREATOR</span><b>001</b><small>SOFYINI©</small></div>
+        <div class="profile-main">
+          <p class="eyebrow">ABOUT THE CREATOR</p>
+          <h2>BEYOND<br><em>THE FRAME.</em></h2>
+          <p class="profile-description">I am a visual creative exploring the intersection of design, art and digital imagery. My work focuses on experimentation, composition and creating visuals that feel distinctive.</p>
+          <div class="stats-row">
+            <div><b>05<span>+</span></b><small>CREATIVE FIELDS</small></div>
+            <div><b>∞</b><small>IDEAS TO EXPLORE</small></div>
+            <div><b>2026</b><small>ACTIVE ARCHIVE</small></div>
+          </div>
+          <div class="skill-list">
+            <div class="skill-row"><span>01</span><b>GRAPHIC DESIGN</b><i style="--level:92%"></i><small>92</small></div>
+            <div class="skill-row"><span>02</span><b>DIGITAL ART</b><i style="--level:88%"></i><small>88</small></div>
+            <div class="skill-row"><span>03</span><b>PHOTOGRAPHY</b><i style="--level:78%"></i><small>78</small></div>
+            <div class="skill-row"><span>04</span><b>VIDEO EDITING</b><i style="--level:85%"></i><small>85</small></div>
+          </div>
         </div>
+        <div class="profile-side">
+          <div class="profile-side-art"><img src="assets/profile.jpg" alt="SOFyini artwork" onerror="this.style.display='none'"><span>PROFILE<br>PORTRAIT</span></div>
+          <div class="profile-side-caption"><span>CREATIVE ID</span><b>SOF_001</b></div>
+        </div>
+      </div>
+    </section>
 
-    </div>
+    <!-- SOCIAL -->
+    <section class="screen social-screen" id="contact">
+      <div class="section-topline"><span>04 / EXTERNAL NETWORK</span><span>CONNECTIONS <b>06</b></span></div>
+      <div class="social-content">
+        <p class="eyebrow">FIND ME ELSEWHERE</p>
+        <h2>LET'S CREATE<br><em>TOGETHER.</em></h2>
+        <p class="social-intro">Follow the creative process, discover new experiments or get in touch for collaborations.</p>
+        <div class="social-list">
+          <a href="https://www.instagram.com/sofyini_/" target="_blank" rel="noopener"><span>01</span><b>INSTAGRAM</b><small>@SOFYINI_</small><strong>↗</strong></a>
+          <a href="https://pin.it/d58tIUisS" target="_blank" rel="noopener"><span>02</span><b>PINTEREST</b><small>VISUAL REFERENCES</small><strong>↗</strong></a>
+          <a href="https://www.facebook.com/profile.php?id=100071643532305" target="_blank" rel="noopener"><span>03</span><b>FACEBOOK</b><small>SOFYINI</small><strong>↗</strong></a>
+          <a href="https://www.tiktok.com/@sofyini_" target="_blank" rel="noopener"><span>04</span><b>TIKTOK / EDIT</b><small>@SOFYINI_</small><strong>↗</strong></a>
+          <a href="https://www.tiktok.com/@sofy_line" target="_blank" rel="noopener"><span>05</span><b>TIKTOK / ART</b><small>@SOFY_LINE</small><strong>↗</strong></a>
+          <a href="https://www.tiktok.com/@sofy_vex" target="_blank" rel="noopener"><span>06</span><b>TIKTOK / LIFE</b><small>@SOFY_VEX</small><strong>↗</strong></a>
+        </div>
+        <a class="contact-button" href="mailto:sofyannabil476@gmail.com">SEND A MESSAGE <span>✉</span></a>
+      </div>
+      <footer>© 2026 SOFYINI — VISUAL EXPERIMENTS <span>END OF TRANSMISSION / 004</span></footer>
+    </section>
+  </main>
 
-</div>
+  <aside class="settings-drawer" id="settingsDrawer">
+    <div class="drawer-head"><b>SYSTEM SETTINGS</b><button id="settingsClose" aria-label="Close settings">×</button></div>
+    <div class="drawer-row"><span>APPEARANCE<small>LIGHT / DARK MODE</small></span><button id="themeToggle">DARK</button></div>
+    <div class="drawer-row"><span>AMBIENT AUDIO<small>BACKGROUND MUSIC</small></span><button id="audioToggle">OFF</button></div>
+    <a class="drawer-mail" href="mailto:sofyannabil476@gmail.com">CONTACT / EMAIL ↗</a>
+    <small class="drawer-foot">SOFYINI SYSTEM / BUILD 2026.01</small>
+  </aside>
+  <button class="settings-trigger" id="settingsTrigger" aria-label="Open settings"><span>☰</span></button>
 
-<script src="script.js"></script>
+  <div class="preview-modal" id="previewModal">
+    <button class="preview-x" id="previewClose" aria-label="Close preview">×</button>
+    <div class="preview-box"><img id="previewImage" src="" alt=""><div id="previewTitle">PROJECT</div></div>
+  </div>
+
+  <audio id="bgMusic" loop preload="none"><source src="assets/music.mp3" type="audio/mpeg"></audio>
+  <script src="script.js"></script>
 </body>
 </html>
