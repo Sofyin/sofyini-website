@@ -1,572 +1,130 @@
-const scroller = document.getElementById("scroller");
-const scenes = [...document.querySelectorAll(".scene")];
-const current = document.getElementById("current");
-const cursor = document.querySelector(".cursor");
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => [...root.querySelectorAll(s)];
 
-if (scroller && scenes.length) {
+// Main navigation active state + subbar label
+const sectionNames = {
+  home: "CREATIVE CHARACTER FILE",
+  work: "CREATIVE DATABASE",
+  about: "CREATOR INFORMATION",
+  contact: "EXTERNAL NETWORK"
+};
+const sections = $$(".screen");
+const navLinks = $$(".nav-link");
+const subLinks = $$(".sub-link");
+const subbarLabel = $("#subbarLabel");
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const id = entry.target.id;
+    navLinks.forEach(a => a.classList.toggle("active", a.dataset.section === id));
+    if (subbarLabel) subbarLabel.textContent = sectionNames[id] || "SOFYINI ARCHIVE";
+    subLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === `#${id}`));
+  });
+}, {threshold: 0.5});
+sections.forEach(section => observer.observe(section));
 
-    const observer = new IntersectionObserver((entries) => {
+// Mobile nav
+const menuToggle = $("#menuToggle");
+const mainNav = $(".main-nav");
+menuToggle?.addEventListener("click", () => mainNav.classList.toggle("show"));
+navLinks.forEach(link => link.addEventListener("click", () => mainNav?.classList.remove("show")));
 
-        entries.forEach((entry) => {
-
-            if (entry.isIntersecting) {
-
-                entry.target.classList.add("active");
-
-                if (current) {
-                    current.textContent =
-                        String(scenes.indexOf(entry.target) + 1)
-                        .padStart(2, "0");
-                }
-
-            }
-
-        });
-
-    }, {
-        root: scroller,
-        threshold: 0.55
-    });
-
-
-    scenes.forEach((scene) => {
-        observer.observe(scene);
-    });
-
-}
-
-document.addEventListener("keydown", (e) => {
-
-    if (
-        ["ArrowDown", "PageDown", "ArrowUp", "PageUp", " "]
-        .includes(e.key)
-    ) {
-
-        e.preventDefault();
-
-        const active =
-            Math.max(
-                0,
-                scenes.findIndex((scene) =>
-                    scene.classList.contains("active")
-                )
-            );
-
-        const dir =
-            (e.key === "ArrowUp" || e.key === "PageUp")
-                ? -1
-                : 1;
-
-        const next =
-            Math.max(
-                0,
-                Math.min(
-                    scenes.length - 1,
-                    active + dir
-                )
-            );
-
-        scenes[next].scrollIntoView({
-            behavior: "smooth"
-        });
-
-    }
-
+// Hero ability selector
+const abilityContent = {
+  design: ["VISUAL DESIGN", "Building visual identities, compositions and graphic experiments with a strong sense of form."],
+  art: ["DIGITAL ART", "Exploring digital illustration, image manipulation and expressive visual storytelling."],
+  photo: ["PHOTOGRAPHY", "Capturing atmosphere, perspective and unexpected details through photographic experiments."]
+};
+$$(".ability").forEach(button => {
+  button.addEventListener("click", () => {
+    $$(".ability").forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+    const [title, description] = abilityContent[button.dataset.ability];
+    $("#abilityTitle").textContent = title;
+    $("#abilityDescription").textContent = description;
+  });
 });
 
-if (cursor) {
-
-    document.addEventListener("mousemove", (e) => {
-
-        cursor.style.transform =
-            `translate3d(${e.clientX}px, ${e.clientY}px, 0)
-             translate3d(-50%, -50%, 0)`;
-
+// Project category filtering
+$$(".category-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    $$(".category-tab").forEach(item => item.classList.remove("active"));
+    tab.classList.add("active");
+    const filter = tab.dataset.filter;
+    $$(".project-card").forEach(card => {
+      card.hidden = filter !== "all" && card.dataset.category !== filter;
     });
-
-
-    document
-        .querySelectorAll("a, .work-card, .art-item, button")
-        .forEach((el) => {
-
-            el.addEventListener("mouseenter", () => {
-                cursor.classList.add("view");
-            });
-
-            el.addEventListener("mouseleave", () => {
-                cursor.classList.remove("view");
-            });
-
-        });
-
-}
-
-if (scenes[0]) {
-    scenes[0].classList.add("active");
-}
-
-const projectPreview =
-    document.getElementById("projectPreview");
-
-const previewImage =
-    document.getElementById("previewImage");
-
-const previewTitle =
-    document.getElementById("previewTitle");
-
-const previewClose =
-    document.getElementById("previewClose");
-
-
-let previewIsOpen = false;
-
-let previewHistoryState = false;
-
-function openPreview(image, title) {
-
-    if (
-        !projectPreview ||
-        !previewImage ||
-        !previewTitle
-    ) {
-        return;
-    }
-
-
-    previewImage.src = image;
-    previewImage.alt = title;
-
-    previewTitle.textContent = title;
-
-
-    projectPreview.classList.add("active");
-
-    document.body.style.overflow = "hidden";
-
-    previewIsOpen = true;
-
-    if (!previewHistoryState) {
-
-        history.pushState(
-            {
-                preview: true
-            },
-            "",
-            window.location.href
-        );
-
-        previewHistoryState = true;
-
-    }
-
-}
-
-function closePreview(fromBrowserBack = false) {
-
-    if (!previewIsOpen) {
-        return;
-    }
-
-
-    if (projectPreview) {
-        projectPreview.classList.remove("active");
-    }
-
-
-    document.body.style.overflow = "";
-
-    previewIsOpen = false;
-
-    if (
-        !fromBrowserBack &&
-        previewHistoryState
-    ) {
-
-        previewHistoryState = false;
-
-        history.back();
-
-    }
-
-    else {
-
-        previewHistoryState = false;
-
-    }
-
-}
-
-document
-    .querySelectorAll(".work-card")
-    .forEach((card) => {
-
-        card.addEventListener("click", () => {
-
-            const image =
-                card.getAttribute("data-image");
-
-            const title =
-                card.getAttribute("data-title");
-
-            openPreview(image, title);
-
-        });
-
-    });
-
-document
-    .querySelectorAll(".art-item")
-    .forEach((art) => {
-
-        art.addEventListener("click", () => {
-
-            const image =
-                art.getAttribute("data-image");
-
-            const title =
-                art.getAttribute("data-title");
-
-            openPreview(image, title);
-
-        });
-
-    });
-
-if (previewClose) {
-
-    previewClose.addEventListener("click", (e) => {
-
-        e.stopPropagation();
-
-        closePreview(false);
-
-    });
-
-}
-
-if (projectPreview) {
-
-    projectPreview.addEventListener("click", (e) => {
-
-        if (e.target === projectPreview) {
-
-            closePreview(false);
-
-        }
-
-    });
-
-}
-
-window.addEventListener("popstate", () => {
-
-    if (previewIsOpen) {
-
-        closePreview(true);
-
-    }
-
+  });
 });
 
-
-document.addEventListener("keydown", (e) => {
-
-    if (e.key === "Escape" && previewIsOpen) {
-
-        closePreview(false);
-
-    }
-
+// Archive expand/collapse
+$("#archiveToggle")?.addEventListener("click", e => {
+  const grid = $("#archiveGrid");
+  const opened = grid.classList.toggle("open");
+  e.currentTarget.innerHTML = opened ? 'CLOSE ART ARCHIVE <b>−</b>' : 'OPEN ART ARCHIVE <b>＋</b>';
 });
 
-const loadingScreen =
-    document.getElementById("loading-screen");
-
-const introMessage =
-    document.getElementById("introMessage");
-
-const introContinue =
-    document.getElementById("introContinue");
-
-
-const introSteps = [
-    "OH, A GUEST.",
-    "HI:).",
-    "LET'S GET STARTED"
-];
-
-
-let introIndex = 0;
-
-function showIntro() {
-
-    if (!introMessage || !introContinue) {
-        return;
-    }
-
-
-    introMessage.classList.remove("show");
-    introContinue.classList.remove("show");
-
-
-    setTimeout(() => {
-
-        introMessage.textContent =
-            introSteps[introIndex];
-
-        introMessage.classList.add("show");
-
-
-        setTimeout(() => {
-
-            introContinue.classList.add("show");
-
-        }, 700);
-
-    }, 400);
-
+// Image preview modal
+const modal = $("#previewModal");
+const previewImage = $("#previewImage");
+const previewTitle = $("#previewTitle");
+function openPreview(src, title) {
+  if (!modal || !previewImage) return;
+  previewImage.src = src;
+  previewImage.alt = title;
+  previewTitle.textContent = title;
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
 }
-
-if (loadingScreen) {
-
-    loadingScreen.addEventListener("click", () => {
-
-        if (introMessage) {
-            introMessage.classList.remove("show");
-        }
-
-        if (introContinue) {
-            introContinue.classList.remove("show");
-        }
-
-
-        setTimeout(() => {
-
-            introIndex++;
-
-
-            if (
-                introIndex <
-                introSteps.length
-            ) {
-
-                showIntro();
-
-            }
-
-            else {
-
-                loadingScreen.classList.add("finished");
-
-            }
-
-        }, 500);
-
-    });
-
-
-    showIntro();
-
+function closePreview() {
+  modal?.classList.remove("open");
+  document.body.style.overflow = "";
 }
+$$(".project-card, .archive-card").forEach(card => {
+  card.addEventListener("click", () => openPreview(card.dataset.image, card.dataset.title));
+});
+$("#previewClose")?.addEventListener("click", closePreview);
+modal?.addEventListener("click", e => { if (e.target === modal) closePreview(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePreview(); });
 
-const seeMoreBtn =
-    document.getElementById("seeMoreBtn");
+// Settings drawer
+const drawer = $("#settingsDrawer");
+$("#settingsTrigger")?.addEventListener("click", () => drawer.classList.toggle("open"));
+$("#settingsClose")?.addEventListener("click", () => drawer.classList.remove("open"));
 
-const seeLessBtn =
-    document.getElementById("seeLessBtn");
-
-const artArchive =
-    document.getElementById("artArchive");
-
-if (
-    seeMoreBtn &&
-    artArchive
-) {
-
-    seeMoreBtn.addEventListener("click", () => {
-
-        artArchive.classList.add("open");
-
-        seeMoreBtn.style.display = "none";
-
-
-        setTimeout(() => {
-
-            artArchive.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-        }, 150);
-
-    });
-
+// Theme
+const themeButton = $("#themeToggle");
+function setTheme(theme) {
+  document.body.classList.toggle("light-mode", theme === "light");
+  if (themeButton) themeButton.textContent = theme.toUpperCase();
+  localStorage.setItem("sofyini-theme", theme);
 }
+setTheme(localStorage.getItem("sofyini-theme") || "dark");
+themeButton?.addEventListener("click", () => {
+  setTheme(document.body.classList.contains("light-mode") ? "dark" : "light");
+});
 
-
-if (
-    seeLessBtn &&
-    artArchive
-) {
-
-    seeLessBtn.addEventListener("click", () => {
-
-        artArchive.classList.remove("open");
-
-
-        setTimeout(() => {
-
-            seeMoreBtn.style.display = "flex";
-
-            seeMoreBtn.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-        }, 500);
-
-    });
-
-}
-
-const settingsButton =
-    document.getElementById("settingsButton");
-
-const settingsPanel =
-    document.getElementById("settingsPanel");
-
-const themeToggle =
-    document.getElementById("themeToggle");
-
-const audioToggle = document.getElementById("audioToggle");
-const audioText = document.getElementById("audioText");
-const bgMusic = document.getElementById("bgMusic");
-
+// Audio — requires assets/music.mp3
+const audio = $("#bgMusic");
+const audioButton = $("#audioToggle");
 let audioOn = false;
-
-if (audioToggle && bgMusic) {
-
-    audioToggle.addEventListener("click", async (e) => {
-
-        e.stopPropagation();
-
-        if (!audioOn) {
-
-            try {
-
-                bgMusic.volume = 0.5;
-
-                await bgMusic.play();
-
-                audioOn = true;
-
-                audioToggle.classList.add("active");
-
-                if (audioText) {
-                    audioText.textContent = "ON";
-                }
-
-            } catch (error) {
-
-                console.error("Audio gagal dimainkan:", error);
-
-            }
-
-        } else {
-
-            bgMusic.pause();
-
-            audioOn = false;
-
-            audioToggle.classList.remove("active");
-
-            if (audioText) {
-                audioText.textContent = "OFF";
-            }
-
-        }
-
-    });
-
-}
-
-if (
-    settingsButton &&
-    settingsPanel
-) {
-
-    settingsButton.addEventListener("click", (e) => {
-
-        e.stopPropagation();
-
-        settingsButton.classList.toggle("active");
-
-        settingsPanel.classList.toggle("active");
-
-    });
-
-    document.addEventListener("click", (e) => {
-
-        if (
-            !settingsPanel.contains(e.target) &&
-            !settingsButton.contains(e.target)
-        ) {
-
-            settingsButton.classList.remove("active");
-
-            settingsPanel.classList.remove("active");
-
-        }
-
-    });
-
-}
-
-
-function applyTheme(theme) {
-
-    if (theme === "light") {
-
-        document.body.classList.add("light-mode");
-
-    } else {
-
-        document.body.classList.remove("light-mode");
-
+audioButton?.addEventListener("click", async () => {
+  if (!audio) return;
+  if (!audioOn) {
+    try {
+      audio.volume = 0.35;
+      await audio.play();
+      audioOn = true;
+      audioButton.textContent = "ON";
+      audioButton.classList.add("active");
+    } catch (error) {
+      audioButton.textContent = "RETRY";
+      console.warn("Audio playback failed:", error);
     }
-
-}
-
-const savedTheme =
-    localStorage.getItem("sofyini-theme") || "dark";
-
-applyTheme(savedTheme);
-
-if (themeToggle) {
-
-    themeToggle.addEventListener("click", (e) => {
-
-        e.stopPropagation();
-
-        const isLight =
-            document.body.classList.contains("light-mode");
-
-
-        const newTheme =
-            isLight ? "dark" : "light";
-
-
-        applyTheme(newTheme);
-
-        localStorage.setItem(
-            "sofyini-theme",
-            newTheme
-        );
-
-    });
-
-}
-
-{/* <button onclick="window.location.href = 'mailto:sofyannabil476@gmail.com?subject=Halo%20Admin&body=Halo,%20saya%20ingin%20bertanya...';">
-Kirim Pesan
-</button> */}
+  } else {
+    audio.pause();
+    audioOn = false;
+    audioButton.textContent = "OFF";
+    audioButton.classList.remove("active");
+  }
+});
