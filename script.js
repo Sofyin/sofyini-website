@@ -33,7 +33,7 @@ navLinks.forEach(link => link.addEventListener("click", () => mainNav?.classList
 const abilityContent = {
   design: ["VISUAL DESIGN", "Building visual identities, compositions and graphic experiments with a strong sense of form."],
   art: ["DIGITAL ART", "Exploring digital illustration, image manipulation and expressive visual storytelling."],
-  photo: ["PHOTOGRAPHY", "Capturing atmosphere, perspective and unexpected details through photographic experiments."]
+  photo: ["UI/UX", "stands for User Interface (UI) and User Experience (UX), two distinct yet closely connected phases of designing digital products like apps and websites. "]
 };
 $$(".ability").forEach(button => {
   button.addEventListener("click", () => {
