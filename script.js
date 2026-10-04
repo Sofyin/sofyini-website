@@ -79,6 +79,32 @@ function updateLiveClock() {
 }
 updateLiveClock();
 window.setInterval(updateLiveClock, 1000);
+
+// Device-local visit days: count this browser at most once per Jakarta day.
+const visitorCount = $("#visitorCount");
+if (visitorCount) {
+  const dateParts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+  const dateValues = Object.fromEntries(dateParts.map(part => [part.type, part.value]));
+  const today = `${dateValues.year}-${dateValues.month}-${dateValues.day}`;
+  const storageKey = "sofyini-device-visits-v1";
+  try {
+    const stored = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    const total = Number.isSafeInteger(stored.total) && stored.total >= 0 ? stored.total : 0;
+    const updated = stored.lastDate === today
+      ? { total, lastDate: today }
+      : { total: total + 1, lastDate: today };
+    localStorage.setItem(storageKey, JSON.stringify(updated));
+    visitorCount.textContent = String(updated.total).padStart(4, "0");
+  } catch {
+    visitorCount.textContent = "0001";
+  }
+}
+
 let introActiveThisLoad = false;
 let revealElements = [];
 let pageRevealStarted = false;
