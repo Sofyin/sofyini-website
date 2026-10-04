@@ -147,6 +147,15 @@
         <button class="archive-card" data-image="assets/art5.jpg" data-title="ARTWORK 05"><img src="assets/art5.jpg" alt="Artwork 5"><span>ARTWORK 05 ↗</span></button>
         <button class="archive-card" data-image="assets/art6.jpg" data-title="ARTWORK 06"><img src="assets/art6.jpg" alt="Artwork 6"><span>ARTWORK 06 ↗</span></button>
       </div>
+      <div class="video-showcase" aria-labelledby="videoShowcaseTitle">
+        <div class="video-showcase-heading"><div><p class="eyebrow">MOTION ARCHIVE</p><h3 id="videoShowcaseTitle">VIDEO <em>SHOWCASE</em></h3></div><span>01 / 01</span></div>
+        <div class="video-card-row">
+          <button class="video-card" type="button" data-video="assets/videos/video1.mp4" data-title="MOTION STUDY 01" aria-label="Play Motion Study 01">
+            <video src="assets/videos/video1.mp4" muted playsinline preload="metadata" tabindex="-1" aria-hidden="true"></video>
+            <span class="video-card-play" aria-hidden="true">▶</span><span class="video-card-title"><b>MOTION STUDY 01</b><small>VIDEO / 001</small></span>
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- PROFILE -->
@@ -255,6 +264,11 @@
     <div class="preview-box"><img id="previewImage" src="" alt=""><div id="previewTitle">PROJECT</div></div>
   </div>
 
+  <section class="video-preview" id="videoPreview" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Video preview">
+    <button class="video-preview-close" id="videoPreviewClose" type="button" aria-label="Close video preview">×</button>
+    <div class="video-preview-frame"><video id="videoPreviewPlayer" controls playsinline preload="none"></video><div class="video-preview-caption" id="videoPreviewCaption">MOTION STUDY 01</div></div>
+  </section>
+
   <section class="case-study-modal" id="caseStudyModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="caseStudyTitle">
     <div class="case-study-panel">
       <button class="case-study-close" id="caseStudyClose" type="button" aria-label="Close project details">×</button>
@@ -282,6 +296,9 @@
   <div class="music-player collapsed" id="musicPlayer" aria-label="Music player">
     <div class="music-visualizer" id="audioVisualizer" role="button" tabindex="0" aria-label="Toggle music player" aria-expanded="false">
       <canvas id="visualizerCanvas"></canvas>
+      <div class="music-load-indicator" id="musicLoadIndicator" role="progressbar" aria-label="Loading music" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden>
+        <span>LOADING TRACK</span><b id="musicLoadPercent">0%</b><i><span id="musicLoadBar"></span></i>
+      </div>
     </div>
     <button class="music-collapse" id="musicCollapse" type="button" aria-label="Close music player">×</button>
     <div class="music-info">
