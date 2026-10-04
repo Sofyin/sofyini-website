@@ -1375,6 +1375,16 @@ main {
     sans-serif;
   letter-spacing: 1.5px;
 }
+.visitor-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 5px 8px;
+  border: 1px solid #ffffff32;
+  background: #1118;
+}
+.visitor-counter b { color: var(--theme-accent, #caff3b); font: 800 13px "Barlow Condensed", sans-serif; }
+.visitor-counter small { color: #aaa; font: 700 7px "Barlow Condensed", sans-serif; letter-spacing: 1px; }
 .settings-trigger {
   position: fixed;
   top: 125px;
