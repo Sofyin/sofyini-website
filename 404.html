@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171719">
+  <meta name="description" content="Halaman tidak ditemukan — SOFYINI Creative Archive">
+  <title>404 — Page Not Found | SOFYINI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="not-found-page">
+  <div class="noise" aria-hidden="true"></div>
+  <header class="topbar error-topbar">
+    <a class="brand" href="index.html#home" aria-label="SOFYINI home">
+      <span class="brand-mark">S</span>
+      <span class="brand-name">SOFYINI<small>VISUAL ARCHIVE</small></span>
+    </a>
+    <span class="error-status"><i></i> ARCHIVE CONNECTION LOST</span>
+  </header>
+
+  <main class="error-screen">
+    <div class="error-grid" aria-hidden="true"></div>
+    <span class="error-coordinate error-coordinate-top">SOF / 404 / UNKNOWN ROUTE</span>
+    <span class="error-coordinate error-coordinate-bottom">07° 15' S / 112° 45' E</span>
+
+    <section class="error-content" aria-labelledby="errorTitle">
+      <p class="error-kicker"><span>///</span> SIGNAL INTERRUPTED</p>
+      <h1 class="error-code" id="errorTitle" data-code="404">404</h1>
+      <div class="error-rule"><span></span></div>
+      <h2>THIS PAGE<br><em>WENT OFFLINE.</em></h2>
+      <p class="error-copy">Halaman yang kamu cari tidak ada di dalam arsip ini, atau alamatnya mungkin sudah berubah.</p>
+      <div class="error-actions">
+        <a class="error-action error-action-primary" href="index.html#home">BACK TO LOBBY <b>↗</b></a>
+        <a class="error-action error-action-secondary" href="index.html#work">EXPLORE WORKS <b>↗</b></a>
+      </div>
+      <p class="error-footnote"><span>ERROR CODE: 404</span><span>SOFYINI CREATIVE ARCHIVE / 2026</span></p>
+    </section>
+  </main>
+
+  <script>
+    try {
+      const theme = localStorage.getItem("sofyini-theme");
+      if (["dark", "light", "neon", "monochrome", "retro"].includes(theme)) {
+        document.body.dataset.theme = theme;
+        document.body.classList.toggle("light-mode", theme === "light");
+      }
+    } catch {}
+  </script>
+</body>
+</html>
