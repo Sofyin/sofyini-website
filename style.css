@@ -27,6 +27,162 @@ button {
   background-image: radial-gradient(#fff 0.5px, transparent 0.5px);
   background-size: 4px 4px;
 }
+.intro-active {
+  overflow: hidden;
+}
+.intro-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #050506;
+  color: #f6f2ee;
+  isolation: isolate;
+  cursor: pointer;
+}
+.intro-screen::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  inset: -50%;
+  opacity: 0.12;
+  pointer-events: none;
+  background-image: radial-gradient(#fff 0.55px, transparent 0.7px);
+  background-size: 4px 4px;
+  animation: introGrain 0.2s steps(2) infinite;
+}
+@keyframes introGrain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(2%, -1%); }
+  50% { transform: translate(-1%, 2%); }
+  75% { transform: translate(1%, 1%); }
+  100% { transform: translate(-2%, -1%); }
+}
+.intro-panel {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  width: 50.1%;
+  background: #050506;
+  transition: transform 0.95s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.intro-panel-left { left: 0; }
+.intro-panel-right { right: 0; }
+.intro-content {
+  position: relative;
+  z-index: 3;
+  width: min(90vw, 680px);
+  text-align: center;
+  transition: opacity 0.45s ease, transform 0.65s ease, filter 0.45s ease;
+}
+.intro-kicker {
+  margin: 0 0 16px;
+  color: #caff3b;
+  font: 700 10px "Inter", sans-serif;
+  letter-spacing: 4px;
+}
+.intro-logo {
+  position: relative;
+  margin: 0;
+  color: #f6f2ee;
+  font: 900 clamp(68px, 15vw, 150px)/0.9 "Barlow Condensed", sans-serif;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 22px #caff3b35;
+  animation: introLogoGlitch 3.2s both;
+}
+.intro-logo sup {
+  display: inline-block;
+  margin-left: 5px;
+  color: #caff3b;
+  font-size: 0.28em;
+  vertical-align: top;
+  line-height: 1.3;
+}
+.intro-logo::before,
+.intro-logo::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.intro-logo::before {
+  color: #caff3b;
+  animation: introGlitchLime 2.6s steps(1) 0.2s 2;
+}
+.intro-logo::after {
+  color: #f04c70;
+  animation: introGlitchPink 2.6s steps(1) 0.3s 2;
+}
+@keyframes introLogoGlitch {
+  0% { opacity: 0; filter: blur(12px); transform: scale(1.04); }
+  18% { opacity: 1; filter: blur(0); transform: scale(1); }
+  21% { filter: blur(2px); transform: translateX(3px); }
+  24%, 100% { filter: blur(0); transform: translateX(0); }
+}
+@keyframes introGlitchLime {
+  0%, 12%, 16%, 100% { opacity: 0; transform: translateX(0); clip-path: inset(0); }
+  13% { opacity: 0.75; transform: translateX(-5px); clip-path: inset(22% 0 58%); }
+  15% { opacity: 0.5; transform: translateX(4px); clip-path: inset(62% 0 18%); }
+}
+@keyframes introGlitchPink {
+  0%, 18%, 22%, 100% { opacity: 0; transform: translateX(0); clip-path: inset(0); }
+  19% { opacity: 0.7; transform: translateX(5px); clip-path: inset(48% 0 32%); }
+  21% { opacity: 0.45; transform: translateX(-3px); clip-path: inset(12% 0 72%); }
+}
+.intro-loader {
+  position: relative;
+  width: min(250px, 60vw);
+  height: 2px;
+  margin: 28px auto 22px;
+  overflow: hidden;
+  background: #ffffff25;
+}
+.intro-loader span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 38%;
+  background: #caff3b;
+  box-shadow: 0 0 12px #caff3b;
+  animation: introLoading 1.15s ease-in-out infinite;
+}
+@keyframes introLoading {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(270%); }
+}
+.intro-message {
+  min-height: 1.2em;
+  margin: 0;
+  color: #f6f2ee;
+  font: 800 clamp(13px, 2vw, 17px) "Barlow Condensed", sans-serif;
+  letter-spacing: 0.22em;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+.intro-enter {
+  position: absolute;
+  top: calc(100% + 34px);
+  left: 50%;
+  padding: 10px 15px;
+  border: 1px solid #caff3b;
+  background: transparent;
+  color: #caff3b;
+  font: 800 11px "Barlow Condensed", sans-serif;
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.35s ease, transform 0.35s ease, background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+.intro-enter span { margin-left: 7px; }
+.intro-enter:hover { background: #caff3b; color: #111; }
+.intro-screen.is-ready .intro-enter { opacity: 1; transform: translate(-50%, 0); }
+.intro-screen.is-opening .intro-content { opacity: 0; filter: blur(12px); transform: scale(0.96); }
+.intro-screen.is-opening .intro-panel-left { transform: translateX(-101%); }
+.intro-screen.is-opening .intro-panel-right { transform: translateX(101%); }
+.intro-screen.is-opening::after { opacity: 0; transition: opacity 0.5s ease; }
 .topbar {
   height: 66px;
   position: fixed;
@@ -77,12 +233,31 @@ button {
   margin-top: 5px;
 }
 .main-nav {
+  position: relative;
   height: 100%;
   display: flex;
   align-items: stretch;
   gap: 12px;
 }
+.main-nav::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: var(--active-left, 0px);
+  width: var(--active-width, 0px);
+  background: #caff3b;
+  transform: skew(-12deg);
+  box-shadow: 0 0 20px #caff3b25;
+  transition:
+    left 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
 .nav-link {
+  position: relative;
+  z-index: 1;
   min-width: 105px;
   padding: 0 18px;
   display: grid;
@@ -100,9 +275,7 @@ button {
   color: #caff3b;
 }
 .nav-link.active {
-  background: #caff3b;
   color: #171719;
-  box-shadow: 0 0 20px #caff3b25;
 }
 .top-tools {
   display: flex;
@@ -222,6 +395,13 @@ main {
   color: #fff;
   opacity: 0.035;
   pointer-events: none;
+  animation: watermarkFloat 12s ease-in-out infinite;
+}
+@keyframes watermarkFloat {
+  0%, 100% { translate: 0 0; }
+  25% { translate: 14px -12px; }
+  50% { translate: 0 -24px; }
+  75% { translate: -14px -12px; }
 }
 .hero-copy {
   position: relative;
@@ -534,10 +714,18 @@ main {
 .cross-one {
   right: 1%;
   top: 35%;
+  animation: crossFloat 5s ease-in-out infinite;
 }
 .cross-two {
   left: 5%;
   bottom: 25%;
+  animation: crossFloat 6s ease-in-out -2s infinite;
+}
+@keyframes crossFloat {
+  0%, 100% { translate: 0 0; }
+  25% { translate: 12px -10px; }
+  50% { translate: 0 -20px; }
+  75% { translate: -12px -10px; }
 }
 .deco-dots {
   position: absolute;
@@ -548,6 +736,11 @@ main {
   background-image: radial-gradient(#fff9 1px, transparent 1px);
   background-size: 9px 9px;
   opacity: 0.5;
+  animation: dotsDrift 16s linear infinite alternate;
+}
+@keyframes dotsDrift {
+  from { background-position: 0 0; }
+  to { background-position: 18px 9px; }
 }
 .side-coordinate {
   position: absolute;
@@ -1301,6 +1494,12 @@ body.light-mode .social-list a {
     background: #171719;
     flex-direction: column;
   }
+  .main-nav::before {
+    top: var(--active-top, 0px);
+    bottom: auto;
+    height: var(--active-height, 42px);
+    transform: none;
+  }
   .main-nav.show {
     display: flex;
   }
@@ -1483,5 +1682,250 @@ body.light-mode .social-list a {
   }
   .settings-drawer {
     top: 105px;
+  }
+}
+
+/* Music player */
+.reveal-element {
+  opacity: 0;
+  translate: 0 18px;
+  transition:
+    opacity 0.65s ease var(--reveal-delay, 0ms),
+    translate 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) var(--reveal-delay, 0ms);
+}
+.reveal-element.is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-element,
+  .reveal-element.is-visible {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+  .hero-backdrop,
+  .hero-watermark,
+  .cross-one,
+  .cross-two,
+  .deco-dots {
+    animation: none;
+  }
+  .intro-screen::after,
+  .intro-logo,
+  .intro-logo::before,
+  .intro-logo::after,
+  .intro-loader span {
+    animation: none;
+  }
+  .intro-panel,
+  .intro-content,
+  .intro-enter {
+    transition-duration: 0.01ms;
+  }
+}
+
+.music-player {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  z-index: 160;
+  width: 230px;
+  height: 150px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  background: rgba(20, 22, 20, 0.94);
+  border: 1px solid #ffffff26;
+  border-radius: 8px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition:
+    width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    padding 0.35s ease,
+    border-radius 0.35s ease;
+}
+.music-visualizer {
+  position: relative;
+  width: 100%;
+  height: 38px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.music-visualizer::after {
+  content: "♫";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #caff3b;
+  font: 700 25px/1 "Inter", sans-serif;
+  opacity: 0.9;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.music-player.is-playing .music-visualizer::after {
+  opacity: 0;
+  transform: scale(0.7);
+}
+.music-visualizer:focus-visible {
+  outline: 2px solid #caff3b;
+  outline-offset: 3px;
+}
+.music-visualizer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.music-info {
+  min-width: 0;
+  overflow: hidden;
+  padding-right: 20px;
+}
+.music-collapse {
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  padding: 0 3px;
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.music-collapse:hover {
+  color: #caff3b;
+}
+.music-label {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #caff3b;
+  margin-bottom: 4px;
+}
+.music-title {
+  font-size: 11px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: scaleX(1);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.music-title.scrolling {
+  overflow: visible;
+  text-overflow: clip;
+  animation: musicMarquee 10s linear infinite;
+}
+@keyframes musicMarquee {
+  0%,
+  10% {
+    transform: translateX(0);
+  }
+  90%,
+  100% {
+    transform: translateX(-70%);
+  }
+}
+.music-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.music-controls button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+}
+.music-controls button:hover {
+  color: #caff3b;
+}
+.music-player.collapsed {
+  width: 65px;
+  height: 65px;
+  padding: 10px;
+  justify-content: flex-start;
+}
+.music-player.collapsed .music-info,
+.music-player.collapsed .music-controls,
+.music-player.collapsed .music-collapse {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(0.88);
+  transform-origin: top right;
+  flex: 0 0 auto;
+  transition:
+    opacity 0.18s ease,
+    transform 0.28s ease,
+    visibility 0s linear 0.18s;
+}
+.music-info,
+.music-controls,
+.music-collapse {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transform-origin: top right;
+  transition:
+    opacity 0.22s ease 0.08s,
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0s;
+}
+.music-player.collapsed .music-visualizer {
+  height: 42px;
+  flex: 0 0 42px;
+}
+.music-player.collapsed .music-title {
+  transform: scaleX(0.35);
+}
+.music-player.collapsed .music-title.scrolling {
+  animation: none;
+}
+.volume-setting {
+  margin-top: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #ffffff20;
+}
+.volume-setting label {
+  display: block;
+  font:
+    800 12px "Barlow Condensed",
+    sans-serif;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.volume-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.volume-row input {
+  flex: 1;
+  min-width: 0;
+  accent-color: #caff3b;
+  cursor: pointer;
+}
+.volume-row span {
+  font-size: 10px;
+  min-width: 32px;
+  text-align: right;
+}
+@media (max-width: 600px) {
+  .music-player {
+    right: 12px;
+    bottom: 12px;
+    width: 190px;
+  }
+  .music-player.collapsed {
+    width: 55px;
+    height: 55px;
   }
 }
