@@ -11,6 +11,17 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="intro-screen" id="introScreen" role="dialog" aria-label="SOFYINI introduction">
+    <div class="intro-panel intro-panel-left"></div>
+    <div class="intro-panel intro-panel-right"></div>
+    <div class="intro-content">
+      <p class="intro-kicker">CREATIVE ARCHIVE / 001</p>
+      <h1 class="intro-logo" data-text="SOFYINI©">SOFYINI<sup>©</sup></h1>
+      <div class="intro-loader" aria-hidden="true"><span></span></div>
+      <p class="intro-message" id="introMessage" aria-live="polite">WELCOME TO MY WORLD.</p>
+      <button class="intro-enter" id="introEnter" type="button">CLICK TO ENTER <span>↗</span></button>
+    </div>
+  </div>
   <div class="noise"></div>
 
   <header class="topbar">
@@ -152,7 +163,6 @@
             <div class="skill-row"><span>01</span><b>GRAPHIC DESIGN</b><i style="--level:92%"></i><small>92</small></div>
             <div class="skill-row"><span>02</span><b>DIGITAL ART</b><i style="--level:88%"></i><small>88</small></div>
             <div class="skill-row"><span>03</span><b>UI/UX</b><i style="--level:78%"></i><small>78</small></div>
-            <div class="skill-row"><span>04</span><b>VIDEO EDITING</b><i style="--level:85%"></i><small>85</small></div>
           </div>
         </div>
         <div class="profile-side">
@@ -186,7 +196,21 @@
   <aside class="settings-drawer" id="settingsDrawer">
     <div class="drawer-head"><b>SYSTEM SETTINGS</b><button id="settingsClose" aria-label="Close settings">×</button></div>
     <div class="drawer-row"><span>APPEARANCE<small>LIGHT / DARK MODE</small></span><button id="themeToggle">DARK</button></div>
-    <div class="drawer-row"><span>AMBIENT AUDIO<small>BACKGROUND MUSIC</small></span><button id="audioToggle">OFF</button></div>
+    <div class="volume-setting">
+    <label for="volumeControl">AMBIENT AUDIO</label>
+
+    <div class="volume-row">
+        <input
+            type="range"
+            id="volumeControl"
+            min="0"
+            max="100"
+            value="50"
+        >
+        <span id="volumeValue">50%</span>
+    </div>
+</div>
+    </div>
     <a class="drawer-mail" href="mailto:sofyannabil476@gmail.com">CONTACT / EMAIL ↗</a>
     <small class="drawer-foot">SOFYINI SYSTEM / BUILD 2026.01</small>
   </aside>
@@ -197,7 +221,22 @@
     <div class="preview-box"><img id="previewImage" src="" alt=""><div id="previewTitle">PROJECT</div></div>
   </div>
 
-  <audio id="bgMusic" loop preload="none"><source src="assets/music.mp3" type="audio/mpeg"></audio>
+  <div class="music-player collapsed" id="musicPlayer" aria-label="Music player">
+    <div class="music-visualizer" id="audioVisualizer" role="button" tabindex="0" aria-label="Toggle music player" aria-expanded="false">
+      <canvas id="visualizerCanvas"></canvas>
+    </div>
+    <button class="music-collapse" id="musicCollapse" type="button" aria-label="Close music player">×</button>
+    <div class="music-info">
+      <div class="music-label">NOW PLAYING</div>
+      <div class="music-title" id="musicTitle">No music playing</div>
+    </div>
+    <div class="music-controls">
+      <button id="musicPrev" aria-label="Previous track">|◀</button>
+      <button id="musicPlay" aria-label="Play or pause">▶</button>
+      <button id="musicNext" aria-label="Next track">▶|</button>
+    </div>
+  </div>
+  <audio id="bgMusic" preload="metadata"></audio>
   <script src="script.js"></script>
 </body>
 </html>
