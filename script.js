@@ -425,6 +425,39 @@ $$(".project-card, .archive-card").forEach(card => {
 });
 $("#previewClose")?.addEventListener("click", closePreview);
 modal?.addEventListener("click", e => { if (e.target === modal) closePreview(); });
+const videoPreview = $("#videoPreview");
+const videoPreviewPlayer = $("#videoPreviewPlayer");
+let videoPreviewOpener = null;
+function openVideoPreview(card) {
+  if (!videoPreview || !videoPreviewPlayer) return;
+  videoPreviewOpener = card;
+  videoPreviewPlayer.src = card.dataset.video;
+  $("#videoPreviewCaption").textContent = card.dataset.title || "VIDEO PREVIEW";
+  videoPreview.classList.add("open");
+  videoPreview.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  videoPreviewPlayer.play().catch(() => {});
+  $("#videoPreviewClose")?.focus();
+}
+function closeVideoPreview() {
+  if (!videoPreview?.classList.contains("open")) return;
+  videoPreview.classList.remove("open");
+  videoPreview.setAttribute("aria-hidden", "true");
+  videoPreviewPlayer?.pause();
+  if (videoPreviewPlayer) {
+    videoPreviewPlayer.removeAttribute("src");
+    videoPreviewPlayer.load();
+  }
+  document.body.style.overflow = "";
+  videoPreviewOpener?.focus();
+}
+$$(".video-card").forEach(card => card.addEventListener("click", () => openVideoPreview(card)));
+$("#videoPreviewClose")?.addEventListener("click", closeVideoPreview);
+videoPreview?.addEventListener("click", event => { if (event.target === videoPreview) closeVideoPreview(); });
+videoPreviewPlayer?.addEventListener("dblclick", () => {
+  if (document.fullscreenElement) document.exitFullscreen?.();
+  else videoPreviewPlayer.requestFullscreen?.();
+});
 $("#caseStudyClose")?.addEventListener("click", closeCaseStudy);
 $("#caseStudyBack")?.addEventListener("click", closeCaseStudy);
 caseStudyModal?.addEventListener("click", event => {
@@ -434,6 +467,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
     closePreview();
     closeCaseStudy();
+    closeVideoPreview();
   }
 });
 
@@ -489,7 +523,9 @@ const playlist = [
   "おつかれSUMMER.mp3",
   "Everyday - Slowed + Reverb.mp3",
   "落泪 by-TOYOKI.mp3",
-  "You by-Lloyd, Lil Wayne.mp3"
+  "You by-Lloyd, Lil Wayne.mp3",
+  "nte_gw_bgm_20250514.mp3",
+  "bgm-a8107a2c.mp3"
 ];
 
 let currentTrack = 0;
@@ -497,11 +533,28 @@ let audioContext = null;
 let analyser = null;
 let source = null;
 let dataArray = null;
+const musicLoadIndicator = $("#musicLoadIndicator");
+const musicLoadPercent = $("#musicLoadPercent");
+const musicLoadBar = $("#musicLoadBar");
+
+function updateMusicLoadProgress() {
+  if (!audio || !musicLoadIndicator) return;
+  let percent = 0;
+  if (Number.isFinite(audio.duration) && audio.duration > 0 && audio.buffered.length) {
+    const bufferedEnd = audio.buffered.end(audio.buffered.length - 1);
+    percent = Math.min(100, Math.floor((bufferedEnd / audio.duration) * 100));
+  }
+  musicLoadIndicator.setAttribute("aria-valuenow", String(percent));
+  if (musicLoadPercent) musicLoadPercent.textContent = `${percent}%`;
+  if (musicLoadBar) musicLoadBar.style.width = `${percent}%`;
+}
 
 function loadTrack(index) {
   if (!audio || !playlist.length) return;
   currentTrack = (index + playlist.length) % playlist.length;
   const fileName = playlist[currentTrack];
+  if (musicLoadIndicator) musicLoadIndicator.hidden = false;
+  updateMusicLoadProgress();
   audio.src = `assets/music/${encodeURIComponent(fileName)}`;
   audio.load();
   if (title) {
@@ -572,6 +625,22 @@ playBtn?.addEventListener("click", toggleMusic);
 nextBtn?.addEventListener("click", async () => { loadTrack(currentTrack + 1); await playMusic(); });
 prevBtn?.addEventListener("click", async () => { loadTrack(currentTrack - 1); await playMusic(); });
 audio?.addEventListener("ended", async () => { loadTrack(currentTrack + 1); await playMusic(); });
+audio?.addEventListener("loadstart", () => {
+  if (musicLoadIndicator) musicLoadIndicator.hidden = false;
+  updateMusicLoadProgress();
+});
+audio?.addEventListener("progress", updateMusicLoadProgress);
+audio?.addEventListener("loadedmetadata", updateMusicLoadProgress);
+audio?.addEventListener("canplay", () => {
+  updateMusicLoadProgress();
+  if (musicLoadIndicator) musicLoadIndicator.hidden = true;
+});
+audio?.addEventListener("playing", () => {
+  if (musicLoadIndicator) musicLoadIndicator.hidden = true;
+});
+audio?.addEventListener("error", () => {
+  if (musicLoadIndicator) musicLoadIndicator.hidden = true;
+});
 audio?.addEventListener("play", () => {
   musicPlayer?.classList.add("is-playing");
   if (playBtn) playBtn.textContent = "❚❚";
