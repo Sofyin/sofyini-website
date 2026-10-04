@@ -1018,6 +1018,32 @@ main {
   height: 100px;
   object-fit: cover;
 }
+.video-showcase { margin-top: 34px; }
+.video-showcase-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 12px; }
+.video-showcase-heading .eyebrow { margin: 0 0 4px; color: var(--theme-accent, #caff3b); }
+.video-showcase-heading h3 { margin: 0; font: 900 25px/.95 "Barlow Condensed", sans-serif; letter-spacing: -.5px; }
+.video-showcase-heading h3 em { color: var(--theme-accent, #caff3b); font-style: normal; }
+.video-showcase-heading > span { color: #ffffff85; font: 700 9px "Barlow Condensed", sans-serif; letter-spacing: 1px; }
+.video-card-row { display: flex; gap: 12px; overflow-x: auto; padding: 2px 2px 10px; }
+.video-card {
+  position: relative;
+  flex: 0 0 clamp(190px, 24vw, 270px);
+  height: 126px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #ffffff38;
+  background: var(--theme-card, #292629);
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+.video-card video { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .72; }
+.video-card::after { content: ""; position: absolute; inset: 35% 0 0; background: linear-gradient(transparent, #111e); pointer-events: none; }
+.video-card:hover { border-color: var(--theme-accent, #caff3b); }
+.video-card-play { position: absolute; z-index: 1; left: 50%; top: 43%; display: grid; width: 34px; height: 34px; place-items: center; padding-left: 2px; border: 1px solid #ffffffb0; border-radius: 50%; background: #1119; color: var(--theme-accent, #caff3b); transform: translate(-50%, -50%); }
+.video-card-title { position: absolute; z-index: 2; right: 10px; bottom: 9px; left: 10px; display: flex; align-items: end; justify-content: space-between; gap: 8px; }
+.video-card-title b { font: 800 12px "Barlow Condensed", sans-serif; letter-spacing: .7px; }
+.video-card-title small { color: var(--theme-accent, #caff3b); font: 700 8px "Barlow Condensed", sans-serif; letter-spacing: .8px; }
 .archive-card span {
   display: block;
   padding: 8px;
@@ -1483,6 +1509,13 @@ main {
     sans-serif;
   letter-spacing: 2px;
 }
+.video-preview { position: fixed; inset: 0; z-index: 330; display: none; align-items: center; justify-content: center; padding: clamp(20px, 5vw, 72px); background: #08080af2; backdrop-filter: blur(14px); }
+.video-preview.open { display: flex; }
+.video-preview-frame { width: min(1200px, 100%); max-height: 100%; padding: 10px; border: 1px solid #ffffff3d; background: #171719; box-shadow: 9px 9px color-mix(in srgb, var(--theme-accent, #caff3b) 28%, transparent); }
+.video-preview-frame video { display: block; width: 100%; max-height: calc(100svh - 135px); aspect-ratio: 16 / 9; background: #050505; object-fit: contain; }
+.video-preview-caption { padding: 11px 3px 2px; color: var(--theme-accent, #caff3b); font: 900 15px "Barlow Condensed", sans-serif; letter-spacing: 1.5px; }
+.video-preview-close { position: absolute; top: 20px; right: 24px; width: 42px; height: 42px; border: 1px solid #ffffff60; background: #171719; color: white; font-size: 27px; cursor: pointer; }
+.video-preview-close:hover { border-color: var(--theme-accent, #caff3b); color: var(--theme-accent, #caff3b); }
 .case-study-modal {
   position: fixed;
   inset: 0;
@@ -2115,6 +2148,26 @@ body.light-mode .social-list a {
   width: 100%;
   height: 100%;
 }
+.music-load-indicator[hidden] { display: none; }
+.music-load-indicator {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-content: center;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 7px 10px;
+  background: #101012e8;
+  color: #fff;
+  font: 700 8px "Barlow Condensed", sans-serif;
+  letter-spacing: 1px;
+}
+.music-load-indicator > span { color: #aaa; }
+.music-load-indicator > b { color: var(--theme-accent, #caff3b); font-size: 11px; }
+.music-load-indicator > i { grid-column: 1 / -1; display: block; height: 3px; overflow: hidden; background: #ffffff25; }
+.music-load-indicator > i > span { display: block; width: 0; height: 100%; background: var(--theme-accent, #caff3b); transition: width .18s ease; }
 .music-info {
   min-width: 0;
   overflow: hidden;
@@ -2484,6 +2537,12 @@ body[data-theme="retro"] .hero-backdrop {
 body.light-mode .error-copy { color: #555; }
 body.light-mode .error-coordinate { color: #17171980; }
 @media (max-width: 600px) {
+  .video-showcase { margin-top: 27px; }
+  .video-card { flex-basis: min(72vw, 245px); height: 112px; }
+  .video-preview { padding: 18px 10px; }
+  .video-preview-frame { padding: 6px; }
+  .video-preview-frame video { max-height: calc(100svh - 110px); }
+  .video-preview-close { top: 9px; right: 10px; width: 36px; height: 36px; }
   .not-found-page main { padding-top: 59px; }
   .error-screen { min-height: calc(100svh - 59px); padding: 75px 22px; }
   .error-status { font-size: 7px; letter-spacing: 0.8px; }
