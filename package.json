@@ -1,0 +1,8 @@
+{
+  "name": "sofyini-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node generate-assets.mjs"
+  }
+}

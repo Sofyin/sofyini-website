@@ -1,3 +1,3 @@
 # Video assets
 
-Place portfolio videos here (MP4 recommended). The existing showcase video is `video1.mp4`. To add another video, add its file here and a matching card in the video showcase markup in `index.html`.
+Place portfolio videos here (MP4 recommended). The site discovers supported video files here and in subfolders automatically. On Vercel, push the new file to the connected repository to rebuild the asset index and deploy it.

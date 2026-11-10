@@ -514,9 +514,16 @@ function renderVideos(videos) {
 async function refreshAssetGallery() {
   const loadStatus = $("#assetLoadStatus");
   try {
-    const response = await fetch("/api/assets", {cache:"no-store"});
-    if (!response.ok) throw new Error("Asset index unavailable");
-    const data = await response.json();
+    let data;
+    try {
+      const response = await fetch("/api/assets", {cache:"no-store"});
+      if (!response.ok) throw new Error("Local asset API unavailable");
+      data = await response.json();
+    } catch {
+      const response = await fetch("/assets-index.json", {cache:"no-store"});
+      if (!response.ok) throw new Error("Asset index unavailable");
+      data = await response.json();
+    }
     if (loadStatus) loadStatus.hidden = true;
     const signature = JSON.stringify(data);
     if (signature === assetSignature) return;
