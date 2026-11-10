@@ -19,11 +19,10 @@
       <h1 class="intro-logo" data-text="SOFYINI©">SOFYINI<sup>©</sup></h1>
       <div class="intro-loader" aria-hidden="true"><span></span></div>
       <p class="intro-message" id="introMessage" aria-live="polite">WELCOME TO MY WORLD.</p>
-      <button class="intro-enter" id="introEnter" type="button">CLICK TO ENTER <span>↗</span></button>
     </div>
   </div>
   <div class="noise"></div>
-  <div class="custom-cursor" id="customCursor" aria-hidden="true"><span>OPEN</span></div>
+  <div class="custom-cursor" id="customCursor" aria-hidden="true"></div>
 
   <header class="topbar">
     <a class="brand" href="#home" aria-label="SOFyini home">
@@ -110,51 +109,17 @@
 
     <!-- WORKS -->
     <section class="screen works-screen" id="work">
-      <div class="section-topline"><span>02 / CREATIVE DATABASE</span><span>SELECTED FILES <b>03</b></span></div>
+      <div class="section-topline"><span>02 / CREATIVE DATABASE</span><span>ARTWORKS <b id="artworkCount">00</b></span></div>
       <div class="section-title-row">
         <div><p class="eyebrow">PORTFOLIO INDEX</p><h2>SELECTED <em>WORKS</em></h2></div>
         <p class="section-intro">A collection of visual experiments, selected projects and creative explorations.</p>
       </div>
-      <div class="category-tabs">
-        <button class="category-tab active" data-filter="all">ALL FILES <span>03</span></button>
-        <button class="category-tab" data-filter="design">GRAPHIC DESIGN</button>
-        <button class="category-tab" data-filter="art">DIGITAL ART</button>
-        <button class="category-tab" data-filter="photo">UI/UX</button>
-      </div>
-      <div class="project-grid">
-        <button class="project-card" data-case="project-one" data-category="design" data-image="assets/work1.jpg" data-title="HIBBI — WELCOME HOME">
-          <span class="project-number">FILE_001</span><img src="assets/work1.jpg" alt="Hibbi — Welcome Home poster" onerror="this.style.display='none'">
-          <span class="project-overlay"><b>01</b><span>OPEN FILE ↗</span></span>
-          <span class="project-meta"><b>HIBBI — WELCOME HOME</b><small>GRAPHIC DESIGN</small></span>
-        </button>
-        <button class="project-card" data-case="project-two" data-category="art" data-image="assets/work2.jpg" data-title="SPARKLE — CHARACTER POSTER">
-          <span class="project-number">FILE_002</span><img src="assets/work2.jpg" alt="Sparkle character poster" onerror="this.style.display='none'">
-          <span class="project-overlay"><b>02</b><span>OPEN FILE ↗</span></span>
-          <span class="project-meta"><b>SPARKLE — CHARACTER POSTER</b><small>DIGITAL ART</small></span>
-        </button>
-        <button class="project-card" data-case="project-three" data-category="photo" data-image="assets/work3.jpg" data-title="HU TAO — CHARACTER SELECT UI">
-          <span class="project-number">FILE_003</span><img src="assets/work3.jpg" alt="Hu Tao character selection interface" onerror="this.style.display='none'">
-          <span class="project-overlay"><b>03</b><span>OPEN FILE ↗</span></span>
-          <span class="project-meta"><b>HU TAO — CHARACTER SELECT UI</b><small>UI/UX</small></span>
-        </button>
-      </div>
-      <div class="archive-row"><span>END OF SELECTED FILES</span><span class="archive-line"></span><button id="archiveToggle">OPEN ART ARCHIVE <b>＋</b></button></div>
-      <div class="archive-grid" id="archiveGrid">
-        <button class="archive-card" data-image="assets/art1.jpg" data-title="ARTWORK 01"><img src="assets/art1.jpg" alt="Artwork 1"><span>ARTWORK 01 ↗</span></button>
-        <button class="archive-card" data-image="assets/art2.jpg" data-title="ARTWORK 02"><img src="assets/art2.jpg" alt="Artwork 2"><span>ARTWORK 02 ↗</span></button>
-        <button class="archive-card" data-image="assets/art3.jpg" data-title="ARTWORK 03"><img src="assets/art3.jpg" alt="Artwork 3"><span>ARTWORK 03 ↗</span></button>
-        <button class="archive-card" data-image="assets/art4.jpg" data-title="ARTWORK 04"><img src="assets/art4.jpg" alt="Artwork 4"><span>ARTWORK 04 ↗</span></button>
-        <button class="archive-card" data-image="assets/art5.jpg" data-title="ARTWORK 05"><img src="assets/art5.jpg" alt="Artwork 5"><span>ARTWORK 05 ↗</span></button>
-        <button class="archive-card" data-image="assets/art6.jpg" data-title="ARTWORK 06"><img src="assets/art6.jpg" alt="Artwork 6"><span>ARTWORK 06 ↗</span></button>
-      </div>
-      <div class="video-showcase" aria-labelledby="videoShowcaseTitle">
-        <div class="video-showcase-heading"><div><p class="eyebrow">MOTION ARCHIVE</p><h3 id="videoShowcaseTitle">VIDEO <em>SHOWCASE</em></h3></div><span>01 / 01</span></div>
-        <div class="video-card-row">
-          <button class="video-card" type="button" data-video="assets/videos/video1.mp4" data-title="MOTION STUDY 01" aria-label="Play Motion Study 01">
-            <video src="assets/videos/video1.mp4" muted playsinline preload="metadata" tabindex="-1" aria-hidden="true"></video>
-            <span class="video-card-play" aria-hidden="true">▶</span><span class="video-card-title"><b>MOTION STUDY 01</b><small>VIDEO / 001</small></span>
-          </button>
-        </div>
+      <div class="category-tabs" id="categoryTabs" hidden></div>
+      <div class="project-grid" id="projectGrid" hidden></div>
+      <p class="asset-load-status" id="assetLoadStatus" role="status" hidden>Asset scanner is offline. Start <code>start-portfolio.bat</code> and refresh this page.</p>
+      <div class="video-showcase" id="videoShowcase" aria-labelledby="videoShowcaseTitle" hidden>
+        <div class="video-showcase-heading"><div><p class="eyebrow">MOTION ARCHIVE</p><h3 id="videoShowcaseTitle">VIDEO <em>SHOWCASE</em></h3></div><span id="videoCount">00 / 00</span></div>
+        <div class="video-card-row" id="videoCardRow"></div>
       </div>
     </section>
 
@@ -173,29 +138,17 @@
             <div><b>2026</b><small>ACTIVE ARCHIVE</small></div>
           </div>
           <div class="skill-list" aria-label="Design skills">
-            <article class="skill-visual" style="--skill-score:92; --skill-angle:25deg">
-              <div class="skill-orbit" role="img" aria-label="Graphic Design: 92 out of 100">
-                <span class="skill-orbit__ring" aria-hidden="true"></span><span class="skill-orbit__ring skill-orbit__ring--inner" aria-hidden="true"></span>
-                <span class="skill-orbit__node" aria-hidden="true"></span><span class="skill-orbit__core" aria-hidden="true"></span>
-                <b aria-hidden="true">92</b>
-              </div>
-              <span class="skill-visual__index">01 / 03</span><h3>GRAPHIC DESIGN</h3><small>VISUAL SYSTEMS</small>
+            <article class="skill-visual">
+              <div class="skill-mark skill-mark--design" aria-hidden="true"><span>TYPE<br>+ FORM</span><b>01</b></div>
+              <span class="skill-visual__index">01 / 03</span><h3>GRAPHIC DESIGN</h3><p>Combining color, typography, and layout to make a message clear.</p>
             </article>
-            <article class="skill-visual" style="--skill-score:88; --skill-angle:65deg">
-              <div class="skill-orbit skill-orbit--art" role="img" aria-label="Digital Art: 88 out of 100">
-                <span class="skill-orbit__ring" aria-hidden="true"></span><span class="skill-orbit__ring skill-orbit__ring--inner" aria-hidden="true"></span>
-                <span class="skill-orbit__node" aria-hidden="true"></span><span class="skill-orbit__core" aria-hidden="true"></span>
-                <b aria-hidden="true">88</b>
-              </div>
-              <span class="skill-visual__index">02 / 03</span><h3>DIGITAL ART</h3><small>IMAGE MAKING</small>
+            <article class="skill-visual">
+              <div class="skill-mark skill-mark--art" aria-hidden="true"><span>IMAGE<br>MAKING</span><b>02</b></div>
+              <span class="skill-visual__index">02 / 03</span><h3>DIGITAL ART</h3><p>Creating digital illustrations and visuals with a distinct style and mood.</p>
             </article>
-            <article class="skill-visual" style="--skill-score:78; --skill-angle:110deg">
-              <div class="skill-orbit skill-orbit--ux" role="img" aria-label="UI/UX: 78 out of 100">
-                <span class="skill-orbit__ring" aria-hidden="true"></span><span class="skill-orbit__ring skill-orbit__ring--inner" aria-hidden="true"></span>
-                <span class="skill-orbit__node" aria-hidden="true"></span><span class="skill-orbit__core" aria-hidden="true"></span>
-                <b aria-hidden="true">78</b>
-              </div>
-              <span class="skill-visual__index">03 / 03</span><h3>UI/UX</h3><small>INTERACTION DESIGN</small>
+            <article class="skill-visual">
+              <div class="skill-mark skill-mark--ux" aria-hidden="true"><span>USER<br>FLOW</span><b>03</b></div>
+              <span class="skill-visual__index">03 / 03</span><h3>UI/UX</h3><p>Designing clear screens and user flows that feel simple and comfortable.</p>
             </article>
           </div>
         </div>
@@ -204,7 +157,7 @@
           <div class="profile-side-caption"><span>CREATIVE ID</span><b>SOF_001</b></div>
         </div>
       </div>
-    </section>
+    </section>  
 
     <!-- SOCIAL -->
     <section class="screen social-screen" id="contact">
@@ -226,6 +179,10 @@
       <footer>© 2026 SOFYINI — VISUAL EXPERIMENTS <div class="visitor-counter" aria-live="polite"><b id="visitorCount">--</b><small>VISITS / THIS BROWSER</small></div><span>END OF TRANSMISSION / 004</span></footer>
     </section>
   </main>
+
+  <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top" aria-hidden="true" disabled>
+    <span aria-hidden="true">↑</span>
+  </button>
 
   <aside class="settings-drawer" id="settingsDrawer">
     <div class="drawer-head"><b>SYSTEM SETTINGS</b><button id="settingsClose" aria-label="Close settings">×</button></div>
@@ -259,9 +216,21 @@
   </aside>
   <button class="settings-trigger" id="settingsTrigger" aria-label="Open settings"><span>☰</span></button>
 
-  <div class="preview-modal" id="previewModal">
+  <div class="preview-modal" id="previewModal" role="dialog" aria-modal="true" aria-label="Image preview">
     <button class="preview-x" id="previewClose" aria-label="Close preview">×</button>
-    <div class="preview-box"><img id="previewImage" src="" alt=""><div id="previewTitle">PROJECT</div></div>
+    <div class="preview-box">
+      <div class="preview-image-content">
+        <div class="preview-image-stage" id="previewImageStage"><img id="previewImage" src="" alt=""></div>
+        <div class="preview-caption" id="previewTitle">PROJECT</div>
+      </div>
+      <aside class="preview-zoom-controls" aria-label="Image zoom controls">
+        <button type="button" id="previewZoomIn" aria-label="Zoom in">+</button>
+        <input id="previewZoomRange" type="range" min="1" max="4" step="0.1" value="1" aria-label="Zoom level" aria-orientation="vertical">
+        <button type="button" id="previewZoomOut" aria-label="Zoom out">−</button>
+        <output id="previewZoomValue" for="previewZoomRange">100%</output>
+        <button type="button" class="preview-zoom-reset" id="previewZoomReset" aria-label="Reset zoom to 100%">100%</button>
+      </aside>
+    </div>
   </div>
 
   <section class="video-preview" id="videoPreview" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Video preview">

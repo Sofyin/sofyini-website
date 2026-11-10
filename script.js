@@ -1,10 +1,9 @@
-const $ = (s, root=document) => root.querySelector(s);
+﻿const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
 const customCursor = $("#customCursor");
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 if (customCursor && finePointer.matches) {
   document.body.classList.add("has-custom-cursor");
-  const cursorLabel = $(".custom-cursor span", customCursor);
   const magneticTargets = $$("a, button, .project-card, .archive-card");
   magneticTargets.forEach(element => element.classList.add("magnetic-target"));
   let currentMagnet = null;
@@ -34,10 +33,6 @@ if (customCursor && finePointer.matches) {
       releaseMagnet();
       return;
     }
-    const label = interactive.closest(".project-card, .archive-card") ? "VIEW"
-      : interactive.matches("#musicPlay, video, [data-cursor='play']") ? "PLAY"
-      : "OPEN";
-    cursorLabel.textContent = label;
     customCursor.classList.add("is-active");
 
     const magnet = interactive.closest(".magnetic-target");
@@ -108,15 +103,27 @@ if (visitorCount) {
 let introActiveThisLoad = false;
 let revealElements = [];
 let pageRevealStarted = false;
+let revealObserver;
 function startPageReveal() {
   if (pageRevealStarted) return;
   pageRevealStarted = true;
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    revealElements.forEach(element => element.classList.add("is-visible"));
-  }));
+  // Reveal anything already on screen after the browser has painted its
+  // hidden starting state; keep observing the rest until they enter view.
+  requestAnimationFrame(() => {
+    revealElements.forEach(element => {
+      const bounds = element.getBoundingClientRect();
+      const visible = bounds.bottom > 0 && bounds.top < window.innerHeight &&
+        bounds.right > 0 && bounds.left < window.innerWidth;
+      if (visible) {
+        element.classList.add("is-visible");
+        return;
+      }
+      revealObserver.observe(element);
+    });
+  });
 }
 
-// One short intro per browser tab session; clicking anywhere skips it.
+// Play the intro once per browser tab session, then open the archive automatically.
 const introScreen = $("#introScreen");
 if (introScreen) {
   try {
@@ -127,29 +134,24 @@ if (introScreen) {
       sessionStorage.setItem("sofyini-intro-seen", "1");
       document.body.classList.add("intro-active");
       const introMessage = $("#introMessage");
-      const handleIntroKey = event => {
-        if (event.key === "Enter" || event.key === " ") enterIntro();
-      };
       const enterIntro = () => {
         if (introScreen.classList.contains("is-opening")) return;
         introScreen.classList.add("is-opening");
         document.body.classList.remove("intro-active");
-        document.removeEventListener("keydown", handleIntroKey);
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         window.setTimeout(() => {
           introScreen.remove();
           startPageReveal();
-        }, 1050);
+        }, reduceMotion ? 20 : 1050);
       };
       window.setTimeout(() => {
         if (introMessage && introScreen.isConnected) introMessage.textContent = "DESIGN. ART. EXPERIMENT.";
       }, 1450);
-      window.setTimeout(() => introScreen.classList.add("is-ready"), 2900);
-      introScreen.addEventListener("click", enterIntro);
-      $("#introEnter")?.addEventListener("click", enterIntro);
-      document.addEventListener("keydown", handleIntroKey);
+      window.setTimeout(enterIntro, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 100 : 3200);
     }
   } catch {
     introScreen.remove();
+    startPageReveal();
   }
 }
 
@@ -164,6 +166,30 @@ const sections = $$(".screen");
 const navLinks = $$(".nav-link");
 const subLinks = $$(".sub-link");
 const subbarLabel = $("#subbarLabel");
+const backToTop = $("#backToTop");
+let backToTopTimer = 0;
+let backToTopVisible = false;
+function updateBackToTop() {
+  const atPageEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+  if (!atPageEnd) {
+    window.clearTimeout(backToTopTimer);
+    backToTopTimer = 0;
+    backToTopVisible = false;
+    backToTop?.classList.remove("is-visible");
+    backToTop?.setAttribute("aria-hidden", "true");
+    if (backToTop) backToTop.disabled = true;
+    return;
+  }
+  if (backToTopVisible || backToTopTimer) return;
+  backToTopTimer = window.setTimeout(() => {
+    backToTopTimer = 0;
+    if (window.scrollY + window.innerHeight < document.documentElement.scrollHeight - 2) return;
+    backToTopVisible = true;
+    backToTop?.classList.add("is-visible");
+    backToTop?.setAttribute("aria-hidden", "false");
+    if (backToTop) backToTop.disabled = false;
+  }, 350);
+}
 function moveNavIndicator() {
   const nav = $(".main-nav");
   const activeLink = $(".nav-link.active", nav || document);
@@ -184,6 +210,26 @@ const observer = new IntersectionObserver(entries => {
   });
 }, {threshold: 0.5});
 sections.forEach(section => observer.observe(section));
+window.addEventListener("scroll", updateBackToTop, {passive: true});
+window.addEventListener("resize", updateBackToTop);
+updateBackToTop();
+backToTop?.addEventListener("click", () => {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  const startY = window.scrollY;
+  const duration = 900;
+  const startTime = performance.now();
+  function animateScroll(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    window.scrollTo(0, startY * (1 - eased));
+    if (progress < 1) requestAnimationFrame(animateScroll);
+  }
+  requestAnimationFrame(animateScroll);
+});
 moveNavIndicator();
 window.addEventListener("resize", moveNavIndicator);
 
@@ -270,8 +316,20 @@ revealElements = $("main").querySelectorAll(
 );
 revealElements.forEach((element, index) => {
   element.classList.add("reveal-element");
-  element.style.setProperty("--reveal-delay", `${index * 35}ms`);
+  if (element.matches(".hero-copy > *, .section-title-row > div, .profile-layout > .profile-main, .social-content > *")) {
+    element.classList.add("reveal-from-left");
+  }
+  // Keep the cascade lively without leaving later page elements hidden for
+  // several seconds just because they appear later in the document.
+  element.style.setProperty("--reveal-delay", `${Math.min(index * 35, 560)}ms`);
 });
+revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.classList.add("is-visible");
+    revealObserver.unobserve(entry.target);
+  });
+}, { threshold: 0, rootMargin: "0px 0px -4% 0px" });
 if (!introActiveThisLoad) startPageReveal();
 
 // Mobile nav
@@ -344,10 +402,244 @@ $("#archiveToggle")?.addEventListener("click", e => {
   e.currentTarget.innerHTML = opened ? 'CLOSE ART ARCHIVE <b>âˆ’</b>' : 'OPEN ART ARCHIVE <b>ï¼‹</b>';
 });
 
+// Automatically populate artwork and video cards from the local asset index.
+const categoryTabs = $("#categoryTabs");
+const projectGrid = $("#projectGrid");
+const videoShowcase = $("#videoShowcase");
+const videoCardRow = $("#videoCardRow");
+let assetSignature = "";
+
+function assetTitle(filePath) {
+  return filePath.split("/").pop().replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().toUpperCase();
+}
+function assetCategory(relativePath) {
+  const parts = relativePath.split("/").filter(Boolean);
+  const rootFolder = ["portfolio", "artwork"].includes((parts[0] || "").toLowerCase()) ? 1 : 0;
+  const categoryFolder = parts[rootFolder];
+  return categoryFolder && parts.length - rootFolder > 1
+    ? categoryFolder.replace(/[-_]+/g, " ").toUpperCase()
+    : "ARTWORK";
+}
+function renderArtwork(artworks) {
+  if (!projectGrid || !categoryTabs) return;
+  projectGrid.replaceChildren();
+  categoryTabs.replaceChildren();
+  if (!artworks.length) {
+    projectGrid.hidden = true;
+    categoryTabs.hidden = true;
+    return;
+  }
+  const categories = [...new Set(artworks.map(asset => assetCategory(asset.relativePath)))].sort();
+  const allTab = document.createElement("button");
+  allTab.className = "category-tab active";
+  allTab.dataset.filter = "all";
+  allTab.innerHTML = `ALL FILES <span>${String(artworks.length).padStart(2, "0")}</span>`;
+  categoryTabs.append(allTab);
+  categories.forEach(category => {
+    const tab = document.createElement("button");
+    tab.className = "category-tab";
+    tab.dataset.filter = category;
+    tab.textContent = category;
+    categoryTabs.append(tab);
+  });
+  artworks.forEach((asset, index) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "project-card magnetic-target";
+    card.dataset.image = asset.url;
+    card.dataset.title = assetTitle(asset.relativePath);
+    card.dataset.category = assetCategory(asset.relativePath);
+    const number = String(index + 1).padStart(2, "0");
+    card.innerHTML = `<span class="project-number">FILE_${number}</span><span class="project-overlay"><b>${number}</b><span>OPEN FILE ↗</span></span><span class="project-meta"><b></b><small></small></span>`;
+    const image = document.createElement("img");
+    image.src = `${asset.url}?v=${asset.modified}`;
+    image.alt = card.dataset.title;
+    image.addEventListener("error", () => {
+      card.remove();
+      const remaining = projectGrid.querySelectorAll(".project-card").length;
+      const count = $("#artworkCount");
+      if (count) count.textContent = String(remaining).padStart(2, "0");
+      if (!remaining) {
+        projectGrid.hidden = true;
+        categoryTabs.hidden = true;
+      }
+    }, {once:true});
+    card.prepend(image);
+    card.querySelector(".project-meta b").textContent = card.dataset.title;
+    card.querySelector(".project-meta small").textContent = card.dataset.category;
+    projectGrid.append(card);
+  });
+  categoryTabs.hidden = false;
+  projectGrid.hidden = false;
+}
+function renderVideos(videos) {
+  if (!videoShowcase || !videoCardRow) return;
+  videoCardRow.replaceChildren();
+  videoShowcase.hidden = !videos.length;
+  const count = $("#videoCount");
+  if (count) count.textContent = `00 / ${String(videos.length).padStart(2, "0")}`;
+  videos.forEach((asset, index) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "video-card magnetic-target";
+    card.dataset.video = `${asset.url}?v=${asset.modified}`;
+    card.dataset.title = assetTitle(asset.relativePath);
+    card.setAttribute("aria-label", `Play ${card.dataset.title}`);
+    const video = document.createElement("video");
+    video.src = card.dataset.video;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    video.tabIndex = -1;
+    video.setAttribute("aria-hidden", "true");
+    const play = document.createElement("span");
+    play.className = "video-card-play";
+    play.setAttribute("aria-hidden", "true");
+    play.textContent = "▶";
+    const label = document.createElement("span");
+    label.className = "video-card-title";
+    label.innerHTML = `<b></b><small>VIDEO / ${String(index + 1).padStart(3, "0")}</small>`;
+    label.querySelector("b").textContent = card.dataset.title;
+    card.append(video, play, label);
+    video.addEventListener("error", () => {
+      card.remove();
+      const remaining = videoCardRow.children.length;
+      const count = $("#videoCount");
+      if (count) count.textContent = `00 / ${String(remaining).padStart(2, "0")}`;
+      if (!remaining) videoShowcase.hidden = true;
+    }, {once:true});
+    videoCardRow.append(card);
+  });
+}
+async function refreshAssetGallery() {
+  const loadStatus = $("#assetLoadStatus");
+  try {
+    const response = await fetch("/api/assets", {cache:"no-store"});
+    if (!response.ok) throw new Error("Asset index unavailable");
+    const data = await response.json();
+    if (loadStatus) loadStatus.hidden = true;
+    const signature = JSON.stringify(data);
+    if (signature === assetSignature) return;
+    assetSignature = signature;
+    updateMusicPlaylist(data.music || []);
+    const artworkCount = $("#artworkCount");
+    if (artworkCount) artworkCount.textContent = String(data.artwork.length).padStart(2, "0");
+    renderArtwork(data.artwork);
+    renderVideos(data.videos);
+  } catch {
+    if (projectGrid) projectGrid.hidden = true;
+    if (categoryTabs) categoryTabs.hidden = true;
+    if (videoShowcase) videoShowcase.hidden = true;
+    if (loadStatus) loadStatus.hidden = false;
+  }
+}
+categoryTabs?.addEventListener("click", event => {
+  const tab = event.target.closest(".category-tab");
+  if (!tab) return;
+  $$(".category-tab", categoryTabs).forEach(item => item.classList.toggle("active", item === tab));
+  $$(".project-card", projectGrid).forEach(card => {
+    card.hidden = tab.dataset.filter !== "all" && card.dataset.category !== tab.dataset.filter;
+  });
+});
+refreshAssetGallery();
+window.setInterval(refreshAssetGallery, 5000);
+
 // Project case studies and artwork preview modal
 const modal = $("#previewModal");
 const previewImage = $("#previewImage");
 const previewTitle = $("#previewTitle");
+const previewImageStage = $("#previewImageStage");
+const previewZoomRange = $("#previewZoomRange");
+const previewZoomValue = $("#previewZoomValue");
+let previewZoom = 1;
+const previewPointers = new Map();
+let previewPinchStart = null;
+let previewPanPoint = null;
+function setPreviewZoom(nextZoom, focalPoint) {
+  if (!previewImageStage || !previewImage?.naturalWidth || !previewImage.naturalHeight) return;
+  const stage = previewImageStage;
+  const stageRect = stage.getBoundingClientRect();
+  const focus = focalPoint || { x: stage.clientWidth / 2, y: stage.clientHeight / 2 };
+  const oldWidth = previewImage.getBoundingClientRect().width || 1;
+  const oldHeight = previewImage.getBoundingClientRect().height || 1;
+  const oldLeft = Math.max((stage.clientWidth - oldWidth) / 2, 0);
+  const oldTop = Math.max((stage.clientHeight - oldHeight) / 2, 0);
+  const sourceX = Math.max(0, Math.min(1, (stage.scrollLeft + focus.x - oldLeft) / oldWidth));
+  const sourceY = Math.max(0, Math.min(1, (stage.scrollTop + focus.y - oldTop) / oldHeight));
+  previewZoom = Math.max(1, Math.min(4, nextZoom));
+  const fitScale = Math.min(stage.clientWidth / previewImage.naturalWidth, stage.clientHeight / previewImage.naturalHeight);
+  const width = Math.max(1, previewImage.naturalWidth * fitScale * previewZoom);
+  const height = Math.max(1, previewImage.naturalHeight * fitScale * previewZoom);
+  previewImage.style.width = `${width}px`;
+  previewImage.style.height = `${height}px`;
+  if (previewZoom === 1) {
+    stage.scrollLeft = 0;
+    stage.scrollTop = 0;
+  } else {
+    const newLeft = Math.max((stage.clientWidth - width) / 2, 0);
+    const newTop = Math.max((stage.clientHeight - height) / 2, 0);
+    stage.scrollLeft = newLeft + sourceX * width - focus.x;
+    stage.scrollTop = newTop + sourceY * height - focus.y;
+  }
+  if (previewZoomRange) previewZoomRange.value = previewZoom.toFixed(1);
+  if (previewZoomValue) previewZoomValue.value = `${Math.round(previewZoom * 100)}%`;
+}
+function resetPreviewZoom() {
+  setPreviewZoom(1);
+  if (previewImageStage) {
+    previewImageStage.scrollLeft = 0;
+    previewImageStage.scrollTop = 0;
+  }
+}
+previewImage?.addEventListener("load", resetPreviewZoom);
+$("#previewZoomIn")?.addEventListener("click", () => setPreviewZoom(previewZoom + 0.25));
+$("#previewZoomOut")?.addEventListener("click", () => setPreviewZoom(previewZoom - 0.25));
+$("#previewZoomReset")?.addEventListener("click", resetPreviewZoom);
+previewZoomRange?.addEventListener("input", () => setPreviewZoom(Number(previewZoomRange.value)));
+previewImageStage?.addEventListener("wheel", event => {
+  if (!event.ctrlKey && !event.metaKey) return;
+  event.preventDefault();
+  const rect = previewImageStage.getBoundingClientRect();
+  setPreviewZoom(previewZoom + (event.deltaY < 0 ? 0.1 : -0.1), {x:event.clientX - rect.left, y:event.clientY - rect.top});
+}, {passive:false});
+previewImageStage?.addEventListener("pointerdown", event => {
+  previewImageStage.setPointerCapture(event.pointerId);
+  previewPointers.set(event.pointerId, {x:event.clientX, y:event.clientY});
+  if (previewPointers.size === 2) {
+    const [first, second] = [...previewPointers.values()];
+    previewPinchStart = {distance:Math.hypot(second.x-first.x, second.y-first.y), zoom:previewZoom};
+    previewPanPoint = null;
+  } else {
+    previewPanPoint = {x:event.clientX, y:event.clientY};
+  }
+});
+previewImageStage?.addEventListener("pointermove", event => {
+  if (!previewPointers.has(event.pointerId)) return;
+  previewPointers.set(event.pointerId, {x:event.clientX, y:event.clientY});
+  if (previewPointers.size >= 2 && previewPinchStart) {
+    const [first, second] = [...previewPointers.values()];
+    const distance = Math.hypot(second.x-first.x, second.y-first.y);
+    const rect = previewImageStage.getBoundingClientRect();
+    setPreviewZoom(previewPinchStart.zoom * distance / Math.max(1, previewPinchStart.distance), {
+      x:(first.x+second.x)/2-rect.left,
+      y:(first.y+second.y)/2-rect.top
+    });
+  } else if (previewPanPoint && previewZoom > 1) {
+    previewImageStage.scrollLeft -= event.clientX - previewPanPoint.x;
+    previewImageStage.scrollTop -= event.clientY - previewPanPoint.y;
+    previewPanPoint = {x:event.clientX, y:event.clientY};
+  }
+});
+function endPreviewPointer(event) {
+  previewPointers.delete(event.pointerId);
+  previewPinchStart = null;
+  previewPanPoint = previewPointers.size === 1 ? [...previewPointers.values()][0] : null;
+}
+previewImageStage?.addEventListener("pointerup", endPreviewPointer);
+previewImageStage?.addEventListener("pointercancel", endPreviewPointer);
+window.addEventListener("resize", () => {
+  if (modal?.classList.contains("open")) setPreviewZoom(previewZoom);
+});
 const caseStudyModal = $("#caseStudyModal");
 const caseStudyImage = $("#caseStudyImage");
 const caseStudyGallery = $("#caseStudyGallery");
@@ -439,15 +731,16 @@ function openPreview(src, title) {
   previewImage.alt = title;
   previewTitle.textContent = title;
   modal.classList.add("open");
+  resetPreviewZoom();
   document.body.style.overflow = "hidden";
 }
 function closePreview() {
   modal?.classList.remove("open");
   document.body.style.overflow = "";
 }
-$$(".project-card, .archive-card").forEach(card => {
-  if (card.matches(".project-card")) card.addEventListener("click", () => openCaseStudy(card));
-  else card.addEventListener("click", () => openPreview(card.dataset.image, card.dataset.title));
+projectGrid?.addEventListener("click", event => {
+  const card = event.target.closest(".project-card");
+  if (card) openPreview(card.dataset.image, card.dataset.title);
 });
 $("#previewClose")?.addEventListener("click", closePreview);
 modal?.addEventListener("click", e => { if (e.target === modal) closePreview(); });
@@ -477,7 +770,10 @@ function closeVideoPreview() {
   document.body.style.overflow = "";
   videoPreviewOpener?.focus();
 }
-$$(".video-card").forEach(card => card.addEventListener("click", () => openVideoPreview(card)));
+videoCardRow?.addEventListener("click", event => {
+  const card = event.target.closest(".video-card");
+  if (card) openVideoPreview(card);
+});
 $("#videoPreviewClose")?.addEventListener("click", closeVideoPreview);
 videoPreview?.addEventListener("click", event => { if (event.target === videoPreview) closeVideoPreview(); });
 videoPreviewPlayer?.addEventListener("dblclick", () => {
@@ -534,6 +830,17 @@ themePreset?.addEventListener("change", () => setTheme(themePreset.value));
 
 const audio = $("#bgMusic");
 const musicPlayer = $("#musicPlayer");
+function positionBackToTop() {
+  if (!musicPlayer || !backToTop) return;
+  const panel = musicPlayer.getBoundingClientRect();
+  backToTop.style.setProperty("--back-to-top-x", `${panel.left + panel.width / 2}px`);
+  backToTop.style.setProperty("--back-to-top-y", `${panel.top - backToTop.offsetHeight - 12}px`);
+}
+if (musicPlayer && backToTop && "ResizeObserver" in window) {
+  new ResizeObserver(positionBackToTop).observe(musicPlayer);
+}
+window.addEventListener("resize", positionBackToTop);
+positionBackToTop();
 const canvas = $("#visualizerCanvas");
 const playBtn = $("#musicPlay");
 const nextBtn = $("#musicNext");
@@ -543,22 +850,18 @@ const volumeControl = $("#volumeControl");
 const volumeValue = $("#volumeValue");
 const ctx = canvas?.getContext("2d");
 
-const playlist = [
-  "Ariana Grande - bye x Into You [Altare Remix] (Slowed + Reverb) _ Extended Remix.mp3",
-  "OneRepublic - Sunshine (Official Audio) - OneRepublicVEVO (youtube).mp3",
-  "おつかれSUMMER.mp3",
-  "Everyday - Slowed + Reverb.mp3",
-  "落泪 by-TOYOKI.mp3",
-  "You by-Lloyd, Lil Wayne.mp3",
-  "nte_gw_bgm_20250514.mp3",
-  "bgm-a8107a2c.mp3"
-];
+let playlist = [];
 
 let currentTrack = 0;
 let audioContext = null;
 let analyser = null;
 let source = null;
+let musicFadeGain = null;
 let dataArray = null;
+let fadeOutTrackSource = "";
+let pauseFadeTimer = 0;
+let playbackRequestId = 0;
+const MUSIC_FADE_SECONDS = 1.6;
 const musicLoadIndicator = $("#musicLoadIndicator");
 const musicLoadPercent = $("#musicLoadPercent");
 const musicLoadBar = $("#musicLoadBar");
@@ -578,18 +881,90 @@ function updateMusicLoadProgress() {
 function loadTrack(index) {
   if (!audio || !playlist.length) return;
   currentTrack = (index + playlist.length) % playlist.length;
-  const fileName = playlist[currentTrack];
+  const track = playlist[currentTrack];
+  fadeOutTrackSource = "";
   if (musicLoadIndicator) musicLoadIndicator.hidden = false;
   updateMusicLoadProgress();
-  audio.src = `assets/music/${encodeURIComponent(fileName)}`;
+  audio.src = `${track.url}?v=${track.modified}`;
   audio.load();
   if (title) {
-    title.textContent = fileName.replace(/\.[^/.]+$/, "");
+    title.textContent = track.relativePath.split("/").pop().replace(/\.[^/.]+$/, "");
     title.classList.remove("scrolling");
     requestAnimationFrame(() => {
       if (title.scrollWidth > title.clientWidth) title.classList.add("scrolling");
     });
   }
+}
+
+function updateMusicPlaylist(tracks) {
+  const currentPath = playlist[currentTrack]?.relativePath;
+  playlist = tracks;
+  const foundIndex = currentPath ? playlist.findIndex(track => track.relativePath === currentPath) : -1;
+  if (!playlist.length) {
+    audio?.pause();
+    audio?.removeAttribute("src");
+    audio?.load();
+    if (title) title.textContent = "NO MUSIC FILES";
+    if (playBtn) playBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
+    if (prevBtn) prevBtn.disabled = true;
+    if (musicLoadIndicator) musicLoadIndicator.hidden = true;
+    currentTrack = 0;
+    return;
+  }
+  if (playBtn) playBtn.disabled = false;
+  if (nextBtn) nextBtn.disabled = false;
+  if (prevBtn) prevBtn.disabled = false;
+  if (foundIndex >= 0) {
+    currentTrack = foundIndex;
+    return;
+  }
+  currentTrack = 0;
+  loadTrack(0);
+}
+
+function scheduleMusicGain(value, duration) {
+  if (!musicFadeGain || !audioContext) return;
+  const gain = musicFadeGain.gain;
+  const now = audioContext.currentTime;
+  if (typeof gain.cancelAndHoldAtTime === "function") gain.cancelAndHoldAtTime(now);
+  else {
+    gain.cancelScheduledValues(now);
+    gain.setValueAtTime(gain.value, now);
+  }
+  gain.linearRampToValueAtTime(value, now + Math.max(0.01, duration));
+}
+
+function fadeMusicIn() {
+  if (!musicFadeGain || !audioContext) return;
+  const gain = musicFadeGain.gain;
+  const now = audioContext.currentTime;
+  gain.cancelScheduledValues(now);
+  gain.setValueAtTime(0, now);
+  gain.linearRampToValueAtTime(1, now + MUSIC_FADE_SECONDS);
+  fadeOutTrackSource = "";
+}
+
+function fadeMusicOutNearEnd() {
+  if (!audio || !musicFadeGain || !Number.isFinite(audio.duration)) return;
+  const remaining = audio.duration - audio.currentTime;
+  if (remaining > MUSIC_FADE_SECONDS || remaining <= 0 || fadeOutTrackSource === audio.currentSrc) return;
+  fadeOutTrackSource = audio.currentSrc;
+  scheduleMusicGain(0, remaining);
+}
+
+function pauseMusicWithFade() {
+  if (!audio) return;
+  const requestId = ++playbackRequestId;
+  if (audio.paused || !musicFadeGain || !audioContext) {
+    audio.pause();
+    return;
+  }
+  scheduleMusicGain(0, 0.55);
+  window.clearTimeout(pauseFadeTimer);
+  pauseFadeTimer = window.setTimeout(() => {
+    if (requestId === playbackRequestId) audio.pause();
+  }, 580);
 }
 
 function setupVisualizer() {
@@ -600,9 +975,12 @@ function setupVisualizer() {
   analyser = audioContext.createAnalyser();
   analyser.fftSize = 128;
   analyser.smoothingTimeConstant = 0.82;
+  musicFadeGain = audioContext.createGain();
+  musicFadeGain.gain.value = 1;
   source = audioContext.createMediaElementSource(audio);
   source.connect(analyser);
-  analyser.connect(audioContext.destination);
+  analyser.connect(musicFadeGain);
+  musicFadeGain.connect(audioContext.destination);
   dataArray = new Uint8Array(analyser.frequencyBinCount);
 }
 
@@ -632,9 +1010,13 @@ function renderVisualizer() {
 
 async function playMusic() {
   if (!audio) return;
+  window.clearTimeout(pauseFadeTimer);
+  const requestId = ++playbackRequestId;
   try {
     setupVisualizer();
     if (audioContext?.state === "suspended") await audioContext.resume();
+    if (requestId !== playbackRequestId) return;
+    fadeMusicIn();
     await audio.play();
   } catch (error) {
     console.warn("Music playback failed:", error);
@@ -644,13 +1026,14 @@ async function playMusic() {
 function toggleMusic() {
   if (!audio) return;
   if (audio.paused) playMusic();
-  else audio.pause();
+  else pauseMusicWithFade();
 }
 
 playBtn?.addEventListener("click", toggleMusic);
 nextBtn?.addEventListener("click", async () => { loadTrack(currentTrack + 1); await playMusic(); });
 prevBtn?.addEventListener("click", async () => { loadTrack(currentTrack - 1); await playMusic(); });
 audio?.addEventListener("ended", async () => { loadTrack(currentTrack + 1); await playMusic(); });
+audio?.addEventListener("timeupdate", fadeMusicOutNearEnd);
 audio?.addEventListener("loadstart", () => {
   if (musicLoadIndicator) musicLoadIndicator.hidden = false;
   updateMusicLoadProgress();
@@ -703,5 +1086,4 @@ document.addEventListener("pointerdown", event => {
   if (musicPlayer && !musicPlayer.contains(event.target)) setMusicPlayerOpen(false);
 });
 
-loadTrack(0);
 renderVisualizer();
