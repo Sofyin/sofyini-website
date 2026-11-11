@@ -503,7 +503,7 @@ function renderVideos(videos) {
     video.src = card.dataset.video;
     video.muted = true;
     video.playsInline = true;
-    video.preload = "none";
+    video.preload = "metadata";
     video.tabIndex = -1;
     video.setAttribute("aria-hidden", "true");
     const play = document.createElement("span");
