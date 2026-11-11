@@ -7,6 +7,8 @@ if (customCursor && finePointer.matches) {
   const magneticTargets = $$("a, button, .project-card, .archive-card");
   magneticTargets.forEach(element => element.classList.add("magnetic-target"));
   let currentMagnet = null;
+  let cursorFrame = 0;
+  let latestPointer = null;
 
   function releaseMagnet() {
     currentMagnet?.style.removeProperty("--magnet-x");
@@ -16,37 +18,44 @@ if (customCursor && finePointer.matches) {
 
   document.addEventListener("pointermove", event => {
     if (event.pointerType === "touch") return;
-    customCursor.style.left = `${event.clientX}px`;
-    customCursor.style.top = `${event.clientY}px`;
-    customCursor.classList.remove("is-hidden");
-    const target = event.target instanceof Element ? event.target : null;
-    if (!target) return;
-    if (target.closest("input, textarea, [contenteditable='true']")) {
-      customCursor.classList.add("is-hidden");
-      releaseMagnet();
-      return;
-    }
+    latestPointer = {x:event.clientX, y:event.clientY, target:event.target};
+    if (cursorFrame) return;
+    cursorFrame = requestAnimationFrame(() => {
+      cursorFrame = 0;
+      if (!latestPointer) return;
+      const {x, y, target: pointerTarget} = latestPointer;
+      customCursor.style.setProperty("--cursor-x", `${x}px`);
+      customCursor.style.setProperty("--cursor-y", `${y}px`);
+      customCursor.classList.remove("is-hidden");
+      const target = pointerTarget instanceof Element ? pointerTarget : null;
+      if (!target) return;
+      if (target.closest("input, textarea, [contenteditable='true']")) {
+        customCursor.classList.add("is-hidden");
+        releaseMagnet();
+        return;
+      }
 
-    const interactive = target.closest("a, button, [role='button'], video");
-    if (!interactive) {
-      customCursor.classList.remove("is-active");
-      releaseMagnet();
-      return;
-    }
-    customCursor.classList.add("is-active");
+      const interactive = target.closest("a, button, [role='button'], video");
+      if (!interactive) {
+        customCursor.classList.remove("is-active");
+        releaseMagnet();
+        return;
+      }
+      customCursor.classList.add("is-active");
 
-    const magnet = interactive.closest(".magnetic-target");
-    if (!magnet || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      releaseMagnet();
-      return;
-    }
-    if (currentMagnet !== magnet) releaseMagnet();
-    currentMagnet = magnet;
-    const rect = magnet.getBoundingClientRect();
-    const offsetX = Math.max(-5, Math.min(5, (event.clientX - rect.left - rect.width / 2) * 0.12));
-    const offsetY = Math.max(-5, Math.min(5, (event.clientY - rect.top - rect.height / 2) * 0.12));
-    magnet.style.setProperty("--magnet-x", `${offsetX}px`);
-    magnet.style.setProperty("--magnet-y", `${offsetY}px`);
+      const magnet = interactive.closest(".magnetic-target");
+      if (!magnet || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        releaseMagnet();
+        return;
+      }
+      if (currentMagnet !== magnet) releaseMagnet();
+      currentMagnet = magnet;
+      const rect = magnet.getBoundingClientRect();
+      const offsetX = Math.max(-5, Math.min(5, (x - rect.left - rect.width / 2) * 0.12));
+      const offsetY = Math.max(-5, Math.min(5, (y - rect.top - rect.height / 2) * 0.12));
+      magnet.style.setProperty("--magnet-x", `${offsetX}px`);
+      magnet.style.setProperty("--magnet-y", `${offsetY}px`);
+    });
   });
 
   document.addEventListener("pointerdown", () => customCursor.classList.add("is-clicking"));
@@ -763,6 +772,7 @@ function openPreview(src, title, fallbackSrc = src, placeholderSrc = src) {
   modal.classList.add("open");
   resetPreviewZoom();
   document.body.style.overflow = "hidden";
+  stopVisualizer();
   if (placeholderSrc !== src) {
     const fullImage = new Image();
     fullImage.decoding = "async";
@@ -775,6 +785,7 @@ function openPreview(src, title, fallbackSrc = src, placeholderSrc = src) {
 function closePreview() {
   modal?.classList.remove("open");
   document.body.style.overflow = "";
+  startVisualizer();
 }
 projectGrid?.addEventListener("click", event => {
   const card = event.target.closest(".project-card");
@@ -795,6 +806,7 @@ function openVideoPreview(card) {
   videoPreview.classList.add("open");
   videoPreview.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
+  stopVisualizer();
   videoPreviewPlayer.play().catch(() => {});
   $("#videoPreviewClose")?.focus();
 }
@@ -809,6 +821,7 @@ function closeVideoPreview() {
   }
   document.body.style.overflow = "";
   videoPreviewOpener?.focus();
+  startVisualizer();
 }
 videoCardRow?.addEventListener("click", event => {
   const card = event.target.closest(".video-card");
@@ -1025,9 +1038,10 @@ function setupVisualizer() {
   dataArray = new Uint8Array(analyser.frequencyBinCount);
 }
 
+let visualizerFrame = 0;
 function renderVisualizer() {
-  requestAnimationFrame(renderVisualizer);
-  if (!canvas || !ctx) return;
+  visualizerFrame = 0;
+  if (!canvas || !ctx || !audio || audio.paused || document.hidden || modal?.classList.contains("open") || videoPreview?.classList.contains("open")) return;
   const width = canvas.clientWidth;
   const height = canvas.clientHeight;
   const dpr = window.devicePixelRatio || 1;
@@ -1047,6 +1061,20 @@ function renderVisualizer() {
     ctx.fillStyle = themeAccentColor;
     ctx.fillRect(i * (barWidth + gap), height - barHeight, barWidth, barHeight);
   }
+  visualizerFrame = requestAnimationFrame(renderVisualizer);
+}
+function startVisualizer() {
+  if (!visualizerFrame && audio && !audio.paused && !document.hidden && !modal?.classList.contains("open") && !videoPreview?.classList.contains("open")) {
+    visualizerFrame = requestAnimationFrame(renderVisualizer);
+  }
+}
+function stopVisualizer() {
+  if (visualizerFrame) cancelAnimationFrame(visualizerFrame);
+  visualizerFrame = 0;
+  if (canvas && ctx) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 }
 
 async function playMusic() {
@@ -1059,6 +1087,7 @@ async function playMusic() {
     if (requestId !== playbackRequestId) return;
     fadeMusicIn();
     await audio.play();
+    startVisualizer();
   } catch (error) {
     console.warn("Music playback failed:", error);
   }
@@ -1094,10 +1123,12 @@ audio?.addEventListener("error", () => {
 audio?.addEventListener("play", () => {
   musicPlayer?.classList.add("is-playing");
   if (playBtn) playBtn.textContent = "❚❚";
+  startVisualizer();
 });
 audio?.addEventListener("pause", () => {
   musicPlayer?.classList.remove("is-playing");
   if (playBtn) playBtn.textContent = "▶";
+  stopVisualizer();
 });
 
 if (audio && volumeControl && volumeValue) {
@@ -1126,5 +1157,3 @@ collapseMusicButton?.addEventListener("click", () => setMusicPlayerOpen(false));
 document.addEventListener("pointerdown", event => {
   if (musicPlayer && !musicPlayer.contains(event.target)) setMusicPlayerOpen(false);
 });
-
-renderVisualizer();
