@@ -446,7 +446,8 @@ function renderArtwork(artworks) {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "project-card magnetic-target";
-    card.dataset.image = asset.viewerUrl || asset.url;
+    card.dataset.image = `${asset.viewerUrl || asset.url}?v=${asset.modified}`;
+    card.dataset.originalImage = `${asset.url}?v=${asset.modified}`;
     card.dataset.title = assetTitle(asset.relativePath);
     card.dataset.category = assetCategory(asset.relativePath);
     const number = String(index + 1).padStart(2, "0");
@@ -601,7 +602,19 @@ function resetPreviewZoom() {
     previewImageStage.scrollTop = 0;
   }
 }
-previewImage?.addEventListener("load", resetPreviewZoom);
+previewImage?.addEventListener("load", () => {
+  previewImageStage?.classList.remove("is-loading", "image-error");
+  resetPreviewZoom();
+});
+previewImage?.addEventListener("error", () => {
+  const fallback = previewImage.dataset.fallbackSrc;
+  if (fallback && previewImage.src !== new URL(fallback, document.baseURI).href) {
+    previewImage.src = fallback;
+    return;
+  }
+  previewImageStage?.classList.remove("is-loading");
+  previewImageStage?.classList.add("image-error");
+});
 $("#previewZoomIn")?.addEventListener("click", () => setPreviewZoom(previewZoom + 0.25));
 $("#previewZoomOut")?.addEventListener("click", () => setPreviewZoom(previewZoom - 0.25));
 $("#previewZoomReset")?.addEventListener("click", resetPreviewZoom);
@@ -737,6 +750,8 @@ function closeCaseStudy() {
 }
 function openPreview(src, title) {
   if (!modal || !previewImage) return;
+  previewImageStage?.classList.add("is-loading");
+  previewImageStage?.classList.remove("image-error");
   previewImage.src = src;
   previewImage.alt = title;
   previewTitle.textContent = title;
@@ -750,7 +765,10 @@ function closePreview() {
 }
 projectGrid?.addEventListener("click", event => {
   const card = event.target.closest(".project-card");
-  if (card) openPreview(card.dataset.image, card.dataset.title);
+  if (card) {
+    previewImage.dataset.fallbackSrc = card.dataset.originalImage || card.dataset.image;
+    openPreview(card.dataset.image, card.dataset.title);
+  }
 });
 $("#previewClose")?.addEventListener("click", closePreview);
 modal?.addEventListener("click", e => { if (e.target === modal) closePreview(); });

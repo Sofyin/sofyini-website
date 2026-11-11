@@ -1522,6 +1522,9 @@ main {
   gap: 8px;
 }
 .preview-image-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
   min-width: 0;
   min-height: 0;
   flex: 1;
@@ -1534,6 +1537,19 @@ main {
   border: 1px solid #ffffff20;
   cursor: grab;
 }
+.preview-image-stage.is-loading::after,
+.preview-image-stage.image-error::after {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #ffffffa6;
+  font: 800 13px "Barlow Condensed", sans-serif;
+  letter-spacing: 1.5px;
+  pointer-events: none;
+}
+.preview-image-stage.is-loading::after { content: "LOADING IMAGE…"; }
+.preview-image-stage.image-error::after { content: "IMAGE COULD NOT LOAD"; color: #ffb3b3; }
 .preview-image-stage:active { cursor: grabbing; }
 .preview-image-stage::-webkit-scrollbar { width: 9px; height: 9px; }
 .preview-image-stage::-webkit-scrollbar-track { background: #181719; }
