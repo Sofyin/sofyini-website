@@ -66,7 +66,8 @@ async function createPreviews(folder, assets) {
         .webp({ quality: 78, effort: 4 })
         .toFile(galleryPath),
       image.clone()
-        .webp({ quality: 88, effort: 4 })
+        .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 76, effort: 4 })
         .toFile(viewerPath)
     ]);
     asset.previewUrl = previewUrl;

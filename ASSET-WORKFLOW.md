@@ -13,7 +13,7 @@ You can place image files directly in `assets/portfolio/`. Subfolders are scanne
 
 Vercel builds `assets-index.json` automatically from the asset folders on every deployment. Push new assets to the connected Git repository to trigger a deployment and refresh the gallery, video showcase, and music playlist. The deployed page reads this generated index; it does not run `start-portfolio.bat` or the local `server.mjs`.
 
-The build also creates WebP gallery previews up to 960 pixels wide and compressed full-resolution WebP images for the enlarged viewer. Original files stay unchanged. Gallery images load lazily, and video/music files are not preloaded before playback.
+The build also creates WebP gallery previews up to 960 pixels wide and viewer images up to 1600 pixels wide. The gallery preview appears immediately while the viewer image loads. Original files stay unchanged. Gallery images load lazily, and video/music files are not preloaded before playback.
 
 ## Start the local portfolio
 

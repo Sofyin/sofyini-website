@@ -447,6 +447,7 @@ function renderArtwork(artworks) {
     card.type = "button";
     card.className = "project-card magnetic-target";
     card.dataset.image = `${asset.viewerUrl || asset.url}?v=${asset.modified}`;
+    card.dataset.previewImage = `${asset.previewUrl || asset.url}?v=${asset.modified}`;
     card.dataset.originalImage = `${asset.url}?v=${asset.modified}`;
     card.dataset.title = assetTitle(asset.relativePath);
     card.dataset.category = assetCategory(asset.relativePath);
@@ -748,16 +749,28 @@ function closeCaseStudy() {
   document.body.style.overflow = "";
   caseStudyOpener?.focus();
 }
-function openPreview(src, title) {
+let previewRequest = 0;
+function openPreview(src, title, fallbackSrc = src, placeholderSrc = src) {
   if (!modal || !previewImage) return;
-  previewImageStage?.classList.add("is-loading");
+  const requestId = ++previewRequest;
+  previewImageStage?.classList.toggle("is-loading", placeholderSrc === src);
   previewImageStage?.classList.remove("image-error");
-  previewImage.src = src;
+  previewImage.dataset.fallbackSrc = fallbackSrc;
+  previewImage.decoding = "async";
+  previewImage.src = placeholderSrc;
   previewImage.alt = title;
   previewTitle.textContent = title;
   modal.classList.add("open");
   resetPreviewZoom();
   document.body.style.overflow = "hidden";
+  if (placeholderSrc !== src) {
+    const fullImage = new Image();
+    fullImage.decoding = "async";
+    fullImage.src = src;
+    fullImage.decode().then(() => {
+      if (requestId === previewRequest && modal.classList.contains("open")) previewImage.src = src;
+    }).catch(() => {});
+  }
 }
 function closePreview() {
   modal?.classList.remove("open");
@@ -766,8 +779,7 @@ function closePreview() {
 projectGrid?.addEventListener("click", event => {
   const card = event.target.closest(".project-card");
   if (card) {
-    previewImage.dataset.fallbackSrc = card.dataset.originalImage || card.dataset.image;
-    openPreview(card.dataset.image, card.dataset.title);
+    openPreview(card.dataset.image, card.dataset.title, card.dataset.originalImage || card.dataset.image, card.dataset.previewImage || card.dataset.image);
   }
 });
 $("#previewClose")?.addEventListener("click", closePreview);
