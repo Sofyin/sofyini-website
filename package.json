@@ -4,5 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "node generate-assets.mjs"
+  },
+  "dependencies": {
+    "sharp": "^0.35.5"
   }
 }

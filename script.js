@@ -446,13 +446,16 @@ function renderArtwork(artworks) {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "project-card magnetic-target";
-    card.dataset.image = asset.url;
+    card.dataset.image = asset.viewerUrl || asset.url;
     card.dataset.title = assetTitle(asset.relativePath);
     card.dataset.category = assetCategory(asset.relativePath);
     const number = String(index + 1).padStart(2, "0");
     card.innerHTML = `<span class="project-number">FILE_${number}</span><span class="project-overlay"><b>${number}</b><span>OPEN FILE ↗</span></span><span class="project-meta"><b></b><small></small></span>`;
     const image = document.createElement("img");
-    image.src = `${asset.url}?v=${asset.modified}`;
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.fetchPriority = "low";
+    image.src = `${asset.previewUrl || asset.url}?v=${asset.modified}`;
     image.alt = card.dataset.title;
     image.addEventListener("error", () => {
       card.remove();
@@ -489,7 +492,7 @@ function renderVideos(videos) {
     video.src = card.dataset.video;
     video.muted = true;
     video.playsInline = true;
-    video.preload = "metadata";
+    video.preload = "none";
     video.tabIndex = -1;
     video.setAttribute("aria-hidden", "true");
     const play = document.createElement("span");
@@ -892,6 +895,7 @@ function loadTrack(index) {
   fadeOutTrackSource = "";
   if (musicLoadIndicator) musicLoadIndicator.hidden = false;
   updateMusicLoadProgress();
+  audio.preload = "none";
   audio.src = `${track.url}?v=${track.modified}`;
   audio.load();
   if (title) {

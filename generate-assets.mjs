@@ -1,6 +1,7 @@
-import { readdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"]);
@@ -45,11 +46,44 @@ async function scan(folder, extensions) {
   return assets;
 }
 
+async function createPreviews(folder, assets) {
+  for (const asset of assets) {
+    const originalPath = path.join(root, "assets", folder, asset.relativePath);
+    const previewRelativePath = asset.relativePath.replace(/\.[^.]+$/, ".webp");
+    const galleryPath = path.join(root, "assets", "previews", "gallery", folder, previewRelativePath);
+    const viewerPath = path.join(root, "assets", "previews", "full", folder, previewRelativePath);
+    const encodedPath = previewRelativePath.split("/").map(encodeURIComponent).join("/");
+    const previewUrl = `/assets/previews/gallery/${folder}/${encodedPath}`;
+    const viewerUrl = `/assets/previews/full/${folder}/${encodedPath}`;
+    await Promise.all([
+      mkdir(path.dirname(galleryPath), { recursive: true }),
+      mkdir(path.dirname(viewerPath), { recursive: true })
+    ]);
+    const image = sharp(originalPath).rotate();
+    await Promise.all([
+      image.clone()
+        .resize({ width: 960, height: 960, fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 78, effort: 4 })
+        .toFile(galleryPath),
+      image.clone()
+        .webp({ quality: 88, effort: 4 })
+        .toFile(viewerPath)
+    ]);
+    asset.previewUrl = previewUrl;
+    asset.viewerUrl = viewerUrl;
+  }
+}
+
 const [portfolio, legacyArtwork, videos, music] = await Promise.all([
   scan("portfolio", imageExtensions),
   scan("artwork", imageExtensions),
   scan("video", videoExtensions),
   scan("music", musicExtensions)
+]);
+
+await Promise.all([
+  createPreviews("portfolio", portfolio),
+  createPreviews("artwork", legacyArtwork)
 ]);
 
 const data = {
